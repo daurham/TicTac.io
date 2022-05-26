@@ -1,0 +1,41 @@
+{
+  "name": "FILL_ME_IN",
+  "version": "1.0.0",
+  "description": "FILL_ME_IN",
+  "scripts": {
+    "start": "webpack -w",
+    "server": "nodemon server/index.js",
+    "test": "nodemon server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daurham/App-Template.git"
+  },
+  "keywords": [],
+  "author": "daurham",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/daurham/FILL_ME_IN/issues"
+  },
+  "homepage": "https://github.com/daurham/FILL_ME_IN#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "bluebird": "^3.7.2",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "mysql2": "^2.3.3",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.18.0",
+    "@babel/preset-env": "^7.18.0",
+    "@babel/preset-react": "^7.17.12",
+    "babel": "^6.23.0",
+    "babel-loader": "^8.2.5",
+    "nodemon": "^2.0.16",
+    "styled-components": "^5.3.5",
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2"
+  }
+}
