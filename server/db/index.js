@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+/* 
 const mysql2 = require('mysql2');
 const Promise = require('bluebird');
 require('dotenv').config();
@@ -8,5 +10,6 @@ const connection = mysql2.createConnection({
   database: process.env.USER_DATABASE || '',
   password: process.env.USER_PASSWORD || '',
 });
-
 module.exports = connection;
+ */
+module.exports = mongoose;

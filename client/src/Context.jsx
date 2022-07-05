@@ -14,7 +14,6 @@ export default function Context() {
   
 	return (
 		<>
-			<h1>My Context</h1>
 			<contextData.Provider value={value}>
 				<App />
 			</contextData.Provider>
