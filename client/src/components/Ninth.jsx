@@ -6,11 +6,10 @@ import { useData } from "../Context";
 const Ninth = ({ ninthNum, value }) => {
   const {socket, boardData, playerValue, getData, handleClick} = useData();
 
-  // handleClick({newData: {[ninthNum]: playerValue}}); 
 
   return (
     <NonaContainer>
-      <Button onClick={() => handleClick({newData: {[ninthNum]: playerValue}})}>{value}</Button >
+      <Button onClick={() => handleClick({[ninthNum]: playerValue})}><h1>{value}</h1></Button >
     </NonaContainer>
   );
 };

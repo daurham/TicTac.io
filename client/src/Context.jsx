@@ -1,60 +1,147 @@
 import React, { useState, useMemo, useEffect, useContext, createContext } from 'react';
-import axios from 'axios';
 import openSocket from 'socket.io-client'
 import App from './components/App';
+import BoardLayout from './BoardLayout';
 
 const contextData = createContext(/* defaultValue */);
 export const useData = () => useContext(contextData);
 
 export default function Context() {
-	const [boardData, setboardData] = useState();
+	const [boardData, setboardData] = useState(BoardLayout);
 	const [playerValue, setPlayerValue] = useState(1);
+	const [players, setPlayers] = useState([]);
+	const [socket, setSocket] = useState();
 	const [nons, setNons] = useState();
-	let socket;
+	const [user, setUser] = useState();
+	const [turn, setTurn] = useState('');
+	const [player1, setPlayer1] = useState('');
+	const [player2, setPlayer2] = useState('');
+	const [opponentValue, setOpponentValue] = useState();
+	const [winner, foundWinner] = useState(false);
+	const [fullBoard, foundFullBoard] = useState(false);
+
 
 	if (!socket) {
-		socket = openSocket('http://localhost:3000');
-		console.log(socket.id);
+		setSocket(openSocket('http://localhost:3000'));
 	}
 
-	
-  const handleClick = (updateData) => {
-    axios.patch('/api', updateData)
-      .then(() => getData())
-      .catch(console.error);
-  };
 
-	const getData = () => {
-		axios.get('/api').then(({ data }) => {
-			let filteredData = {};
-			for (let key in data[0]) {
-				if (key.indexOf('ninth') > -1) {
-					filteredData[key] = data[0][key];
+	const updateBoard = (data) => {
+		setboardData(prevBoard => {
+			for (let newKey in data) {
+				for (let oldKey in prevBoard) {
+					if (oldKey === newKey) {
+						prevBoard[oldKey] = data[newKey];
+					}
 				}
 			}
-			setboardData(filteredData);
-		}).catch(console.error);
-	}; 
+			return prevBoard;
+		});
+		makeNons();
+		toggleturn();
+	};
+
+
+	const makeNons = () => {
+		setNons(() => {
+			const nonsArr = Object.keys(boardData);
+			return nonsArr.map((x, index) => {
+				if (x === `ninth${index + 1}`) {
+					return { ninth: x, value: boardData[x] }
+				}
+			});
+		});
+	};
+
+
+	const updatePlayers = (playerData) => {
+		setPlayers(playerData);
+	};
+
+
+	const handleClick = (updateData) => {
+		if (user) {
+			if (turn === user) {
+				socket.emit('move', updateData);
+			}
+		}
+	};
+
+
+	const submitPlayer = (playerName) => {
+		socket.emit('addPlayer', playerName);
+		setUser(playerName);
+	};
+
+	
+	const toggleturn = () => {
+		setTurn(() => {
+			if (turn === player1) {
+				return player2;
+			}
+			if (turn === player2) {
+				return player1;
+			}
+		});
+	};
+
+
+	const wipeBoard = () => {
+		for (let key in BoardLayout) {
+			BoardLayout[key] = '';
+		}
+		socket.emit('wipe', BoardLayout);
+	};
+
 
 	useEffect(() => {
-		getData();
-		if(socket.id) {
-			console.log('socket id: ', socket.id)
-			setPlayerValue(socket.id);
-		}
-	}, []);
-	
-	useEffect(() => {
-		if (boardData) {
-			const nonsArr = Object.keys(boardData);
-			let n = nonsArr.map((x, index) => { if(x === `ninth${index + 1}`) {return {ninth: x, value: boardData[x]}} });
-			setNons(n);
-		}   
-	}, [boardData]);
+		makeNons();
+	}, [boardData, winner]);
+
 
 	const value = useMemo(() => ({
-		socket, boardData, playerValue, nons, getData, handleClick
-	}), [boardData, nons]);
+		socket,
+		boardData,
+		playerValue,
+		nons,
+		handleClick,
+		updateBoard,
+		updatePlayers,
+		players,
+		user,
+		setUser,
+		submitPlayer,
+		setPlayerValue,
+		toggleturn,
+		turn,
+		setTurn,
+		player1,
+		setPlayer1,
+		player2,
+		setPlayer2,
+		setOpponentValue,
+		opponentValue,
+		winner,
+		foundWinner,
+		fullBoard,
+		foundFullBoard,
+		wipeBoard,
+		setboardData
+	}),
+		[
+			boardData,
+			nons,
+			players,
+			user,
+			playerValue,
+			turn,
+			players,
+			player1,
+			player2,
+			winner,
+			fullBoard
+		]);
+
 
 	return !boardData || !nons ? null : (
 		<>
