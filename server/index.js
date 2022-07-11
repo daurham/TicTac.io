@@ -3,8 +3,7 @@ const path = require('path');
 
 let players = [];
 let departingID;
-// player1: undefined,
-// player2: undefined
+
 
 const app = express();
 const PORT = process.env.USER_PORT || 3000;
@@ -14,7 +13,13 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 
 const server = app.listen(PORT, () => console.log(`Listening to http://localhost:${PORT}`));
 
-const io = require('./socket').init(server);
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*'
+    // origin: ["http://localhost:3000", "https://admin.socket.io", "http://18.215.43.205/", "http://54.84.135.252:3000", "http://18.215.43.205:3000"],
+  },
+});
+
 io.on('connection', (socket) => {
   console.log('client connected');
 
@@ -33,7 +38,7 @@ io.on('connection', (socket) => {
     io.emit('move', move);
     let curPlayer = players.filter((p) => p.id === socket.id);
 
-    io.emit('announcer', `Player ${curPlayer[0].name} Made a move!`);
+    io.emit('announcer', `${curPlayer[0].name} Made a move!`);
   });
 
   socket.on('disconnect', () => {

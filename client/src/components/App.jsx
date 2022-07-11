@@ -49,7 +49,7 @@ export default function App() {
     playerList = 'Player1: ... Player2: ...';
   }
 
-  
+
   socket.on('move', (data) => {
     updateBoard(data);
   });
@@ -114,7 +114,7 @@ export default function App() {
         <Plist>{playerList}</Plist>
         {user ? <PVal>Player: {playerValue}</PVal> : <div><InptSt onChange={(e) => { console.log(); setInput(e.target.value) }} type="text" /><BtnSt onClick={() => submitPlayer(input)}>Sumbit</BtnSt></div>}
         {winner || fullBoard ? null : (!msg ? <Status>{gameStatus}</Status> : <Status>{msg}</Status>)}
-        {!winner ? null : <h1>WE HAVE A WINNER!</h1>}
+        {!winner ? null : <div><h1>WE HAVE A WINNER!</h1><button onClick={() => wipeBoard()}>Reset</button></div>}
         {!fullBoard ? null : <div><h1>WE HAVE A DRAWWL!</h1><button onClick={() => wipeBoard()}>Reset</button></div>}
       </span>
       <Board />
