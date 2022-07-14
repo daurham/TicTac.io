@@ -8,15 +8,19 @@ let departingID;
 const app = express();
 const PORT = process.env.USER_PORT || 3000;
 
-
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
+//* Local 
 const server = app.listen(PORT, () => console.log(`Listening to http://localhost:${PORT}`));
+//*/
 
+/* Deployed
+app.listen(PORT, () => console.log(`Listening to http://localhost:${PORT}`));
+const server = require('http').createServer(app);
+// */
 const io = require('socket.io')(server, {
   cors: {
     origin: '*'
-    // origin: ["http://localhost:3000", "https://admin.socket.io", "http://18.215.43.205/", "http://54.84.135.252:3000", "http://18.215.43.205:3000"],
   },
 });
 
@@ -32,6 +36,17 @@ io.on('connection', (socket) => {
     }
 
     io.emit('addPlayer', players); // everyone gets it
+  });
+
+  socket.on('message', (message) => { // 'message' is an event
+    console.log(message);
+    let name;
+    for (let player of players) {
+      if (player.id === socket.id) {
+        name = player.name;
+      }
+    }
+    io.emit('message', `${name} said ${message}`); // emit broadcasts to all connected sessions
   });
 
   socket.on('move', (move) => {
@@ -50,7 +65,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('reload', () => {
-    players = players.filter((p) => p.id !== departingID) // removed players that refresh
+    players = players.filter((p) => p.id !== departingID) // removes old players that refresh browser
   });
 
 });

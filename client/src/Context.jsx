@@ -55,7 +55,14 @@ export default function Context() {
 
 
 	const updatePlayers = (playerData) => {
+		// console.log('player update data:', playerData);
 		setPlayers(playerData);
+		if (!player1) {
+      setPlayer1(playerData[0].name);
+    }    
+    if (!player2) {
+      setPlayer2(playerData[1].name);
+    }
 	};
 
 

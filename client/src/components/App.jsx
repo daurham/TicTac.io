@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useData } from "../Context";
 import Board from "./Board";
+import Feed from "./Feed";
 
 export default function App() {
 
@@ -27,27 +28,39 @@ export default function App() {
     setTurn,
     fullBoard,
     foundFullBoard,
+    foundWinner,
     wipeBoard,
     setboardData,
   } = useData();
+
   const [input, setInput] = useState();
   const [msg, setmsg] = useState();
+  const [round, setRound] = useState([]);
+  const [gameStatus, setGameStatus] = useState();
+  const [playerList, setPlayerList] = useState();
+  // const [gameStatus, setGameStatus] = useState();
 
-  let gameStatus;
-  if (player1 && player2) {
-    gameStatus = turn === user ? `Its your turn...` : `Waiting on opponent...`;
-  } else {
-    gameStatus = 'Waiting for Players to join'
-  }
+  const updateGameStatus = () => {
+    console.log('players', player1, player2)
+    if (player1 && player2) {
+      turn === user ? 
+      setGameStatus(`Its your turn...`) : 
+      setGameStatus(`Waiting on opponent...`);
+    } else {
+      setGameStatus('Waiting for Players to join');
+    }
+  };
 
-  let playerList;
-  if (players.length === 1) {
-    playerList = `Player1: ${player1} Player2: ...`;
-  } else if (players.length === 2) {
-    playerList = `Player1: ${player1} Player2: ${player2}`;
-  } else {
-    playerList = 'Player1: ... Player2: ...';
-  }
+  const updatePlayerList = () => {
+    if (players.length === 1) {
+      setPlayerList(`Player1: ${player1} Player2: ...`);
+    } else if (players.length === 2) {
+      setPlayerList(`Player1: ${player1} Player2: ${player2}`);
+    } else {
+      console.log('PLAYERS:', players);
+      setPlayerList('Player1: ... Player2: ...');
+    }
+  };
 
 
   socket.on('move', (data) => {
@@ -73,6 +86,7 @@ export default function App() {
         setOpponentValue('X');
       }
     }
+    console.log('shouldnt see this much', data)
     updatePlayers(data);
   });
 
@@ -87,7 +101,10 @@ export default function App() {
 
   socket.on('wipe', async (freshBoard) => {
     await setboardData(freshBoard);
-    foundFullBoard(false);
+    await foundFullBoard(false);
+    await foundWinner(false);
+    await setRound([...round, 1]);
+    // await setTurn(player1);
   });
 
 
@@ -106,6 +123,12 @@ export default function App() {
   }, []);
 
 
+  useEffect(() => {console.log('winner:', winner, 'round', round)}, [round]);
+  useEffect(() => {
+    updateGameStatus();
+    updatePlayerList();
+    console.log('Checking App');
+  }, []);
 
   return (
     <div>
@@ -114,10 +137,13 @@ export default function App() {
         <Plist>{playerList}</Plist>
         {user ? <PVal>Player: {playerValue}</PVal> : <div><InptSt onChange={(e) => { console.log(); setInput(e.target.value) }} type="text" /><BtnSt onClick={() => submitPlayer(input)}>Sumbit</BtnSt></div>}
         {winner || fullBoard ? null : (!msg ? <Status>{gameStatus}</Status> : <Status>{msg}</Status>)}
-        {!winner ? null : <div><h1>WE HAVE A WINNER!</h1><button onClick={() => wipeBoard()}>Reset</button></div>}
-        {!fullBoard ? null : <div><h1>WE HAVE A DRAWWL!</h1><button onClick={() => wipeBoard()}>Reset</button></div>}
+        <div hidden={!winner}><h1>WE HAVE A WINNER!</h1><button onClick={() => wipeBoard()}>Reset</button></div>
+        {/* {!winner ? null : <div hidden={!winner}><h1>WE HAVE A WINNER!</h1><button onClick={() => wipeBoard()}>Reset</button></div>} */}
+        <div hidden={!fullBoard}><h1>WE HAVE A DRAWWL!</h1><button onClick={() => wipeBoard()}>Reset</button></div>
+        {/* {!fullBoard ? null : <div hidden={!fullBoard}><h1>WE HAVE A DRAWWL!</h1><button onClick={() => wipeBoard()}>Reset</button></div>} */}
       </span>
       <Board />
+      <Feed />
     </div>
   );
 };
