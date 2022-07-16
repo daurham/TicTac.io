@@ -6,10 +6,15 @@ import { useData } from "../Context";
 const Ninth = ({ ninthNum, value }) => {
   const {socket, boardData, playerValue, getData, handleClick} = useData();
 
+  const checkClick = (e) => {
+    if (value === '') {
+      handleClick({[ninthNum]: playerValue});
+    }
+  }
 
   return (
     <NonaContainer>
-      <Button onClick={() => handleClick({[ninthNum]: playerValue})}><h1>{value}</h1></Button >
+      <Button onClick={checkClick}><h1>{value}</h1></Button >
     </NonaContainer>
   );
 };

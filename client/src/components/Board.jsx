@@ -15,16 +15,23 @@ const Board = () => {
     player1,
     player2,
     fullBoard,
-    foundFullBoard
+    foundFullBoard, 
+    setWinner,
+    players
   } = useData();
 
 
   useEffect(() => {
     let winnerFound = checkForWins(nons, playerValue, opponentValue);
     if (winnerFound) {
-      if (winnerFound === playerValue) {
+      // if(winnerFound === 'X') {
+      // } else {
+      // }      
+      if (winnerFound === 'X') {
+        setWinner(players.player1.name);
         foundWinner(true); 
-      } else if (winnerFound === opponentValue) {
+      } else if (winnerFound === 'O') {
+        setWinner(players.player2.name);
         foundWinner(true); 
       } else if (winnerFound === 'Full') {
         foundFullBoard(true);

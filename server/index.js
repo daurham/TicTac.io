@@ -1,8 +1,8 @@
 const express = require('express');
 const path = require('path');
 
-let players = [];
-let departingID;
+const deployedIP = '';
+const clients = require('./clients.js');
 
 
 const app = express();
@@ -15,7 +15,7 @@ const server = app.listen(PORT, () => console.log(`Listening to http://localhost
 //*/
 
 /* Deployed
-app.listen(PORT, () => console.log(`Listening to http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Listening to http://${deployedIP}:${PORT}`));
 const server = require('http').createServer(app);
 // */
 const io = require('socket.io')(server, {
@@ -26,46 +26,69 @@ const io = require('socket.io')(server, {
 
 io.on('connection', (socket) => {
   console.log('client connected');
+  console.log('Current turn: ', clients.turn);
+  console.log(clients);
 
-  socket.on('addPlayer', (name) => {
-    console.log(name, 'is joining');
-    if (players.length === 0) {
-      players.push({ player: 'player1', id: socket.id, name });
-    } else if (players.length === 1) {
-      players.push({ player: 'player2', id: socket.id, name });
-    }
-
-    io.emit('addPlayer', players); // everyone gets it
+  socket.on('connect', () => { 
   });
 
-  socket.on('message', (message) => { // 'message' is an event
-    console.log(message);
-    let name;
-    for (let player of players) {
-      if (player.id === socket.id) {
-        name = player.name;
-      }
-    }
-    io.emit('message', `${name} said ${message}`); // emit broadcasts to all connected sessions
+
+  socket.on('addPlayer1', (name) => {
+    console.log(name, 'is joining as player1');
+    clients.reassign('player1', socket.id, name, 'player1');
+    io.emit('addPlayer1', clients.getPlayers());
+  });
+
+  socket.on('addPlayer2', (name) => {
+    console.log(name, 'is joining as player2');
+    clients.reassign('player2', socket.id, name, 'player2');
+    io.emit('addPlayer2', clients.getPlayers());
+  });
+
+  socket.on('message', (message) => {
+    let curUser = clients.getName(socket.id);
+    io.emit('message', `${curUser}: ${message}`);
   });
 
   socket.on('move', (move) => {
     io.emit('move', move);
-    let curPlayer = players.filter((p) => p.id === socket.id);
+    let curUser = clients.getName(socket.id);
+    io.emit('announcer', `${curUser} made a move!`);
+  });
 
-    io.emit('announcer', `${curPlayer[0].name} Made a move!`);
+  socket.on('disconnecting', () => {
   });
 
   socket.on('disconnect', () => {
-    departingID = socket.id;
+    let curUser = clients.getName(socket.id);
+    if (curUser !== 'Audience') {
+      clients.reassign(curUser, null, null, null);
+    }
+    clients.reassign(socket.id, socket.id, curUser, null);
+    console.log(`${curUser} has disconnected`);
+    io.emit('disconnectPlayer', curUser);
   });
+
 
   socket.on('wipe', (freshBoard) => {
     io.emit('wipe', freshBoard);
   });
 
+  socket.on('resetBoard', (win) => {
+    io.emit('resetBoard', win);
+  });
+
+  socket.on('getTurn', () => {
+    io.emit('getTurn', clients.turn);
+  });
+
+  socket.on('toggleTurn', () => {
+    io.emit('toggleTurn', clients.toggleTurn());
+  });
+
+
+
   socket.on('reload', () => {
-    players = players.filter((p) => p.id !== departingID) // removes old players that refresh browser
   });
 
 });
