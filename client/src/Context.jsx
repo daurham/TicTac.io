@@ -12,15 +12,6 @@ export default function Context() {
 	const [user, setUser] = useState();
 	const [turn, setTurn] = useState();
 	const [status, setStatus] = useState(); // fullBoard / winner state
-	// const [socket, setSocket] = useState(); // import
-	// const [nons, setNons] = useState();// function
-	// const [playerValue, setPlayerValue] = useState('X'); // players
-	// const [player1, setPlayer1] = useState(); // players
-	// const [player2, setPlayer2] = useState();  // players
-	// const [opponentValue, setOpponentValue] = useState(); // players
-	// const [fullBoard, foundFullBoard] = useState(false);
-	// const [winner, setWinner] = useState(false);
-
 
 
 
@@ -51,9 +42,8 @@ export default function Context() {
 	};
 
 	const updatePlayers = (playerData) => {
-		// removing player by name
 		if (playerData == null) {
-			console.log('Got your ass');
+			return;
 		} else if (typeof playerData === 'string') { 
 			setPlayers((oldPlayers) => {
 				let updatedPlayers = {};
@@ -161,20 +151,6 @@ export default function Context() {
 		handleClick,
 		updateBoard,
 		wipeBoard,
-		// nons,
-		// playerValue,
-		// player1,
-		// setPlayer1,
-		// player2,
-		// setPlayer2,
-		// setOpponentValue,
-		// opponentValue,
-		// winner,
-		// isWinner,
-		// foundWinner,
-		// fullBoard,
-		// foundFullBoard,
-		// setWinner,
 	}),
 		[
 			boardData,
@@ -182,14 +158,6 @@ export default function Context() {
 			status,
 			user,
 			turn,
-			// nons,
-			// players,
-			// playerValue,
-			// player1,
-			// player2,
-			// isWinner,
-			// winner,
-			// fullBoard
 		]);
 
 

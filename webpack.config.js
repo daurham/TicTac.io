@@ -1,12 +1,15 @@
+const MODE = require('dotenv').config().parsed.NODE_ENV || 'development';
 const path = require('path');
+const DIST = path.join(__dirname, 'client/dist');
+const SRC = path.join(__dirname, 'client/src');
 
 module.exports = {
-  entry: path.join(__dirname, 'client/src'),
+  entry: SRC,
   output: {
-    path: path.join(__dirname, 'client/dist'),
+    path: DIST,
     filename: 'bundle.js'
   },
-  mode: 'development',
+  mode: MODE,
   module: {
     rules: [
       {

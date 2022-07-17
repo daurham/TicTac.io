@@ -1,25 +1,27 @@
 const express = require('express');
-const { stat } = require('fs');
 const path = require('path');
-
-const deployedIP = '';
-const clients = require('./clients.js');
-
-
+const env = require('dotenv').config().parsed;
 const app = express();
-const PORT = process.env.USER_PORT || 3000;
 
-app.use(express.static(path.join(__dirname, '../client/dist')));
+const PORT = env.USER_PORT || 3000;
+const URL = env.URL || 'localhost'; 
+const DIST = path.join(__dirname, '../client/dist');
+let server;
 
-//* Local 
-const server = app.listen(PORT, () => console.log(`Listening to http://localhost:${PORT}`));
-//*/
 
-/* Deployed
-app.listen(PORT, () => console.log(`Listening to http://${deployedIP}:${PORT}`));
-const server = require('http').createServer(app);
-// */
-const io = require('socket.io')(server, {
+app.use(express.static(DIST));
+
+
+if (env.NODE_ENV === 'development') {
+  /* Runs Locally */
+  server = app.listen(PORT, () => console.log(`Listening to http://${URL}:${PORT}`));
+} else {
+  /* Runs Deployed */
+  app.listen(PORT, () => console.log(`Listening to http://${URL}:${PORT}`));
+  server = require('http').createServer(app);
+}
+
+const io = require('./Socket').init(server, {
   cors: {
     origin: '*'
   },
@@ -27,68 +29,6 @@ const io = require('socket.io')(server, {
 
 io.on('connection', (socket) => {
   console.log('client connected');
-  clients.add(socket.id);
-  console.log('List of', clients);
-  
-  socket.on('connect', () => {});
-
-  socket.on('disconnecting', () => {});
-  
-  socket.on('disconnect', () => {
-    let currUser = clients.getName(socket.id);
-    console.log(`${currUser} has disconnected`);
-    io.emit('disconnectPlayer', currUser);
-    clients.remove(socket.id);
-    clients.remove(currUser);
-  });
-
-  socket.on('getInitClients', () => {
-    io.emit('getInitClients', clients.getPlayers());
-  });
-
-  socket.on('addPlayer1', (name) => {
-    console.log(name, 'is joining as player1');
-    clients.add(socket.id, name, 'player1');
-    io.emit('addPlayer1', clients.getPlayers());
-  });
-
-  socket.on('addPlayer2', (name) => {
-    console.log(name, 'is joining as player2');
-    clients.add(socket.id, name, 'player2');
-    io.emit('addPlayer2', clients.getPlayers());
-  });
-
-  socket.on('message', (message) => {
-    let currUser = clients.getName(socket.id);
-    io.emit('message', `${currUser}: ${message}`);
-  });
-  
-  socket.on('move', (move) => {
-    io.emit('move', move);
-    let currUser = clients.getName(socket.id);
-    io.emit('announcer', `${currUser} made a move!`);
-  });
-  
-  socket.on('wipe', (freshBoard) => {
-    io.emit('wipe', freshBoard);
-  });
-
-  socket.on('getTurn', () => {
-    let player1 = clients.getName('player1');
-    let player2 = clients.getName('player2');
-    if (clients.turn !== player1 && clients.turn !== player2) {
-      clients.turn = player1;
-    }
-    io.emit('getTurn', clients.turn);
-  });
-
-  socket.on('toggleTurn', () => {
-    console.log('It\'s ' + clients.toggleTurn() + '\'s turn');
-    io.emit('toggleTurn', clients.turn);
-  });
-
-  socket.on('updateBoardStatus', (stat) => {
-    io.emit('updateBoardStatus', stat);
-  });
-
 });
+
+require('./socketListeners');
