@@ -1,26 +1,26 @@
-const checkMatrix = (matrix, arrOfWins, playerV, opponentV) => {
-  let hasAWin = false;
+const checkMatrix = (matrix, possibleWins, player1, player2) => {
+  let boardStatus = null;
 
-  let f = matrix.flat().filter(e => e.value !== '');
-  if (f.length === 9) {
-    hasAWin = 'Full';
+  let flatPossibleWinsMatrix = matrix.flat().filter(e => e.value !== '');
+  if (flatPossibleWinsMatrix.length === 9) {
+    boardStatus = 'full';
   }
 
-  arrOfWins.map((arr) => {
-    let a = arr.filter(e => e.value === playerV);
-    if (a.length === 3) {
-      hasAWin = playerV;
+  possibleWins.map((arr) => {
+    let player1Plays = arr.filter(e => e.value === player1.playerValue);
+    if (player1Plays.length === 3) {
+      boardStatus = 'player1';
     }    
-    let o = arr.filter(e => e.value === opponentV);
-    if (o.length === 3) {
-      hasAWin = opponentV;
+    let player2Plays = arr.filter(e => e.value === player2.playerValue);
+    if (player2Plays.length === 3) {
+      boardStatus = 'player2';
     }
   });
-  return hasAWin;
+  return boardStatus;
 };
 
-export default function (nons, playerValue, opponentValue) {
-  const matrix = [[...nons.slice(0, 3)], [...nons.slice(3, 6)], [...nons.slice(6, 9)]];
+export const checkBoardStatus = (boardArray, player1, player2) => {
+  const matrix = [[...boardArray.slice(0, 3)], [...boardArray.slice(3, 6)], [...boardArray.slice(6, 9)]];
   let top = matrix[0];
   let mid = matrix[1];
   let bot = matrix[2];
@@ -29,7 +29,7 @@ export default function (nons, playerValue, opponentValue) {
   let rightCol = [top[2], mid[2], bot[2]];
   let leftDiag = [top[0], mid[1], bot[2]];
   let rightDiag = [top[2], mid[1], bot[0]];
-  let wins = [top, mid, bot, leftCol, midCol, rightCol, leftDiag, rightDiag];
-  let hasAWin = checkMatrix(matrix, wins, playerValue, opponentValue);
-  return hasAWin;
+  let possibleWins = [top, mid, bot, leftCol, midCol, rightCol, leftDiag, rightDiag];
+  let boardStatus = checkMatrix(matrix, possibleWins, player1, player2);
+  return boardStatus;
 };

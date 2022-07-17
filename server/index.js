@@ -1,4 +1,5 @@
 const express = require('express');
+const { stat } = require('fs');
 const path = require('path');
 
 const deployedIP = '';
@@ -26,69 +27,68 @@ const io = require('socket.io')(server, {
 
 io.on('connection', (socket) => {
   console.log('client connected');
-  console.log('Current turn: ', clients.turn);
-  console.log(clients);
+  clients.add(socket.id);
+  console.log('List of', clients);
+  
+  socket.on('connect', () => {});
 
-  socket.on('connect', () => { 
+  socket.on('disconnecting', () => {});
+  
+  socket.on('disconnect', () => {
+    let currUser = clients.getName(socket.id);
+    console.log(`${currUser} has disconnected`);
+    io.emit('disconnectPlayer', currUser);
+    clients.remove(socket.id);
+    clients.remove(currUser);
   });
 
+  socket.on('getInitClients', () => {
+    io.emit('getInitClients', clients.getPlayers());
+  });
 
   socket.on('addPlayer1', (name) => {
     console.log(name, 'is joining as player1');
-    clients.reassign('player1', socket.id, name, 'player1');
+    clients.add(socket.id, name, 'player1');
     io.emit('addPlayer1', clients.getPlayers());
   });
 
   socket.on('addPlayer2', (name) => {
     console.log(name, 'is joining as player2');
-    clients.reassign('player2', socket.id, name, 'player2');
+    clients.add(socket.id, name, 'player2');
     io.emit('addPlayer2', clients.getPlayers());
   });
 
   socket.on('message', (message) => {
-    let curUser = clients.getName(socket.id);
-    io.emit('message', `${curUser}: ${message}`);
+    let currUser = clients.getName(socket.id);
+    io.emit('message', `${currUser}: ${message}`);
   });
-
+  
   socket.on('move', (move) => {
     io.emit('move', move);
-    let curUser = clients.getName(socket.id);
-    io.emit('announcer', `${curUser} made a move!`);
+    let currUser = clients.getName(socket.id);
+    io.emit('announcer', `${currUser} made a move!`);
   });
-
-  socket.on('disconnecting', () => {
-  });
-
-  socket.on('disconnect', () => {
-    let curUser = clients.getName(socket.id);
-    if (curUser !== 'Audience') {
-      clients.reassign(curUser, null, null, null);
-    }
-    clients.reassign(socket.id, socket.id, curUser, null);
-    console.log(`${curUser} has disconnected`);
-    io.emit('disconnectPlayer', curUser);
-  });
-
-
+  
   socket.on('wipe', (freshBoard) => {
     io.emit('wipe', freshBoard);
   });
 
-  socket.on('resetBoard', (win) => {
-    io.emit('resetBoard', win);
-  });
-
   socket.on('getTurn', () => {
+    let player1 = clients.getName('player1');
+    let player2 = clients.getName('player2');
+    if (clients.turn !== player1 && clients.turn !== player2) {
+      clients.turn = player1;
+    }
     io.emit('getTurn', clients.turn);
   });
 
   socket.on('toggleTurn', () => {
-    io.emit('toggleTurn', clients.toggleTurn());
+    console.log('It\'s ' + clients.toggleTurn() + '\'s turn');
+    io.emit('toggleTurn', clients.turn);
   });
 
-
-
-  socket.on('reload', () => {
+  socket.on('updateBoardStatus', (stat) => {
+    io.emit('updateBoardStatus', stat);
   });
 
 });

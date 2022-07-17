@@ -3,131 +3,138 @@ import styled from "styled-components";
 import { useData } from "../Context";
 import Board from "./Board";
 import Feed from "./Feed";
-import BoardLayout from './../BoardLayout';
+// import BoardLayout from './../BoardLayout';
 
 export default function App() {
 
   const {
     socket,
     boardData,
-    nons,
-    updateBoard,
-    updatePlayers,
+    // setboardData,
     players,
-    setPlayers,
+    // setPlayers,
     user,
-    submitPlayer,
-    setUser,
-    setPlayerValue,
-    playerValue,
+    // setUser,
     turn,
-    player1,
-    player2,
-    setPlayer1,
-    setPlayer2,
-    setOpponentValue,
-    winner,
-    isWinner,
     setTurn,
-    fullBoard,
-    foundFullBoard,
-    foundWinner,
+    status,
+    setStatus,
+    updatePlayers,
+    updateBoard,
+    submitPlayer,
     wipeBoard,
-    setboardData,
+    updateBoardStatus,
+    getPlayerValue,
+    // nons,
+    // setPlayerValue,
+    // player1,
+    // player2,
+    // setPlayer1,
+    // setPlayer2,
+    // setOpponentValue,
+    // opponentValue,
+    // winner,
+    // isWinner,
+    // fullBoard,
+    // foundFullBoard,
+    // foundWinner,
   } = useData();
 
   const [input, setInput] = useState();
   const [msg, setmsg] = useState();
   const [round, setRound] = useState([]);
-  const [gameStatus, setGameStatus] = useState();
-  const [playerList, setPlayerList] = useState();
 
   const updateGameStatus = () => {
+    const { player1, player2 } = players;
     if (player1 && player2) {
-      turn === user ?
-        setGameStatus(`Its your turn...`) :
-        setGameStatus(`Waiting on opponent...`);
+      return (turn === user ?
+        `Its your turn...`
+        : `Waiting on opponent...`);
     } else {
-      setGameStatus('Waiting for Players to join');
+      return 'Waiting for Players to join';
     }
   };
 
   const updatePlayerList = () => {
-    if (players.player1 && !players.player2) {
-      setPlayerList(`Player1: ${player1} Player2: ...`);
-    } else if (!players.player1 && players.player2) {
-      setPlayerList(`Player1: ... Player2: ${player2}`);
-    } else if (players.player1 && players.player2) {
-      setPlayerList(`Player1: ${player1} Player2: ${player2}`);
+    const { player1, player2 } = players;
+    if (player1 && !player2) {
+      return `Player1: ${player1.name} Player2: ...`;
+    } else if (!player1 && player2) {
+      return `Player1: ... Player2: ${player2.name}`;
+    } else if (player1 && player2) {
+      return `Player1: ${player1.name} Player2: ${player2.name}`;
     } else {
-      setPlayerList('Player1: ... Player2: ...');
+      return 'Player1: ... Player2: ...';
     }
   };
 
+  const foundWinner = () => {
+    if (status === 'player1' || status === 'player2') {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  
+  const getWinner = () => {
+    if (status === 'player1' || status === 'player2') {
+      return players[status].name;
+    }
+  };
+  
+  const boardIsFull = () => {
+    if (status === 'full') {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  
+  const drawStatus = () => {
+    let responses = ['WE HAVE A DRAWL', 'BOFF YALL LOST'];
+    return responses[Math.floor(Math.random() * responses.length)]
+  };
 
-  const setupPlayer1 = (playersObj) => {
-    setPlayer1(playersObj.player1.name);
-    // if (players.player1) {
-    // }
-  }
 
-  const setupPlayer2 = (playersObj) => {
-    setPlayer1(playersObj.player2.name);
-    // if (players.player2) {
-    // }
-  }
 
-  socket.on('move', (data) => {
+
+  const moveFn = (data) => {
     updateBoard(data);
-  });
+  };
 
-
-  socket.on('getTurn', (name) => {
+  const getTurnFn = (name) => {
     if (turn !== name) {
       setTurn(name);
     }
-  });
+  };
 
-  socket.on('toggleTurn', (name) => {
+  const toggleTurnFn = (name) => {
     setTurn(name);
-  });
+  };
 
-  socket.on('addPlayer1', (players) => {
-    // console.log(players);
-    setPlayer1(players.player1.name);
-    if (user === players.player1.name) {
-      setPlayerValue('X');
-      setOpponentValue('O');
+  const addPlayer1Fn = useCallback((players) => {
+    const { player1 } = players;
+    if (player1) {
+      updatePlayers(players);
     }
-    // console.log('updating players: ', players)
-    updatePlayers(players);
-  });
+  }, [players])
 
-  socket.on('addPlayer2', (players) => {
-    setPlayer2(players.player2.name);
-    if (user === players.player2.name) {
-      console.log(user)
-      setPlayerValue('O');
-      setOpponentValue('X');
+  const addPlayer2Fn = useCallback((players) => {
+    const { player2 } = players;
+    if (player2) {
+      updatePlayers(players);
     }
-    updatePlayers(players);
-  });
+  }, [players])
 
+  // const announcerFn = (msg) => {
+  //   setmsg(msg);
+  //   setTimeout(function () {
+  //     setmsg(updateGameStatus());
+  //   }, 2000);
+  // };
 
-  socket.on('announcer', (msg) => {
-    // setmsg(msg);
-    setTimeout(function () {
-      // setmsg(gameStatus);
-    }, 2000);
-  });
-
-  socket.on('wipe', () => {
-    // let boardCopy = {};
-    // for (let key in BoardLayout) {
-    //   boardCopy[key] = '';
-    // }
-    // setboardData(boardCopy);
-    setboardData({
+  const wipeFn = () => {
+    updateBoard({
       ninth1: "",
       ninth2: "",
       ninth3: "",
@@ -138,85 +145,103 @@ export default function App() {
       ninth8: "",
       ninth9: ""
     });
-  });
+  };
 
-  // socket.on('round', () => {
-  //   setRound([...round, 1]);
-  // });
+  const updateBoardStatusFn = (stat) => {
+    setStatus(stat);
+  };
 
-  socket.on('resetBoard', (win) => {
-    if (win) {
-      foundWinner(false);
-    } else {
-      // foundFullBoard(false);
-    }
-  });
-
-  socket.on('connect', () => {
+  const connectFn = useCallback(() => {
     socket.emit('getInitClients');
     socket.emit('getTurn');
-  });
-
-  socket.on('getInitClients', (players) => {
-    setPlayers(players);
-
-    if (players.player1 && !player1) {
-      setupPlayer1(players);
-    }
-    if (players.player2 && !player2) {
-      setupPlayer2(players);
-    }
-    updatePlayerList();
-  });
-
-  socket.on('disconnect', data => {
-    // console.log('disconnect data:', data);
-  });
-
-  socket.on('disconnectPlayer', async playerName => {
-    // console.log('disconnect Player:', playerName);
-    await setPlayers(() => {
-      let updatedPlayers = {};
-      for (let key in players) {
-        if (players[key]) {
-          if (players[key].name !== playerName) {
-            updatedPlayers[key] = players[key];
-          }
-        }
-      }
-      // console.log('UPDATED Username??: ', updatedPlayers);
-      return updatedPlayers;
-    });
-
-    // console.log('UPDATED Username: ', players);
-  });
-
-
-  useEffect(() => {
-    updateGameStatus();
-    updatePlayerList();
   }, []);
 
+  const getInitClientsFn = useCallback((players) => {
+    updatePlayers(players);
+  }, []);
+
+  const disconnectFn = () => {
+  };
+
+  const disconnectPlayerFn = (playerName) => {
+    updatePlayers(playerName);
+  };
+
   useEffect(() => {
-    updatePlayerList();
-    updateGameStatus();
-  }, [players, turn, player1, player2]);
+
+    socket.on('move', moveFn);
+
+    socket.on('getTurn', getTurnFn);
+
+    socket.on('toggleTurn', toggleTurnFn);
+
+    socket.on('addPlayer1', addPlayer1Fn);
+
+    socket.on('addPlayer2', addPlayer2Fn);
+
+    // socket.on('announcer', announcerFn);
+
+    socket.on('wipe', wipeFn);
+
+    socket.on('updateBoardStatus', updateBoardStatusFn);
+
+    socket.on('getInitClients', getInitClientsFn);
+
+    socket.on('connect', connectFn);
+
+    socket.on('disconnect', disconnectFn);
+
+    socket.on('disconnectPlayer', disconnectPlayerFn);
+
+
+    return () => {
+      socket.off('move');
+      socket.off('getTurn');
+      socket.off('toggleTurn');
+      socket.off('addPlayer1');
+      socket.off('addPlayer2');
+      // socket.off('announcer');
+      socket.off('wipe');
+      socket.off('updateBoardStatus');
+      socket.off('connect');
+      socket.off('getInitClients');
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('disconnectPlayer');
+    }
+  }, [
+    boardData,
+    status,
+    players,
+    turn,
+    user,
+  ]);
 
   return (
-    <div>
-      <span>
-        <h1>TicTac.io</h1>
-        <Plist>{playerList}</Plist>
-        {user ? <PVal hidden={isWinner || fullBoard} >Player: {playerValue}</PVal> : <div><InptSt onChange={(e) => { console.log(); setInput(e.target.value) }} type="text" /><BtnSt onClick={() => submitPlayer(input)}>Sumbit</BtnSt></div>}
-        {isWinner || fullBoard ? null : (!msg ? <Status>{gameStatus}</Status> : <Status>{msg}</Status>)}
-        {!isWinner ? null : <div><BigStatus>{winner.toUpperCase()} WON!</BigStatus><button onClick={() => wipeBoard(true)}>Reset</button></div>}
-        {!fullBoard ? null : <div><BigStatus>WE HAVE A DRAWWL!</BigStatus><button onClick={wipeBoard}>Reset</button></div>}
-      </span>
-      <Board />
-      <Feed />
-    </div>
+    <AppContainer>
+
+      <Title>TicTac.io</Title>
+
+      <GameStatusContainer>
+        <Plist>{updatePlayerList()}</Plist>
+        {user ? <PVal hidden={foundWinner() || boardIsFull()} >Player: {getPlayerValue()}</PVal> : <div><InptSt onChange={(e) => setInput(e.target.value)} type="text" /><BtnSt onClick={() => submitPlayer(input)} type="submit">Sumbit</BtnSt></div>}
+        {foundWinner() || boardIsFull() ? null : (!msg ? <Status>{updateGameStatus()}</Status> : <Status>{msg}</Status>)}
+        {!foundWinner() ? null : <div><BigStatus>{getWinner().toUpperCase()} WON!</BigStatus><BtnSt onClick={() => wipeBoard(true)}>Reset</BtnSt></div>}
+        {!boardIsFull() ? null : <div><BigStatus>{drawStatus()}</BigStatus><BtnSt onClick={wipeBoard}>Reset</BtnSt></div>}
+      </GameStatusContainer>
+
+      <GameContainer>
+        <Board />
+        <Feed />
+      </GameContainer>
+
+    </AppContainer>
   );
 };
+
+const AppContainer = styled.div``;
+const GameContainer = styled.div``;
+const GameStatusContainer = styled.div``;
 
 
 const PVal = styled.h6`
@@ -229,6 +254,9 @@ const Status = styled.h4`
   margin: 3px;
   `;
 const BigStatus = styled.h2`
+  margin: 0px;
+  `;
+const Title = styled.h1`
   margin: 0px;
   `;
 const BtnSt = styled.button`

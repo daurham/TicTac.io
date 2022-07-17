@@ -1,49 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import Ninth from './Ninth';
 import { useData } from "../Context";
-import checkForWins from "./utils";
+import { checkBoardStatus } from "./utils";
 
 const Board = () => {
   const {
-    boardData,
-    playerValue,
-    nons,
-    opponentValue,
-    winner,
-    foundWinner,
-    player1,
-    player2,
-    fullBoard,
-    foundFullBoard, 
-    setWinner,
-    players
+    players,
+    status,
+    makeBoardArray,
+    updateBoardStatus,
   } = useData();
+
+  const { player1, player2 } = players;
+  let boardArray = makeBoardArray();
 
 
   useEffect(() => {
-    let winnerFound = checkForWins(nons, playerValue, opponentValue);
-    if (winnerFound) {
-      // if(winnerFound === 'X') {
-      // } else {
-      // }      
-      if (winnerFound === 'X') {
-        setWinner(players.player1.name);
-        foundWinner(true); 
-      } else if (winnerFound === 'O') {
-        setWinner(players.player2.name);
-        foundWinner(true); 
-      } else if (winnerFound === 'Full') {
-        foundFullBoard(true);
+    if (player1 && player2) {
+      let currBoardStatus = checkBoardStatus(boardArray, player1, player2);
+      if (currBoardStatus) {
+        
+        if (currBoardStatus === 'player1') {
+          updateBoardStatus('player1');
+        } else if (currBoardStatus === 'player2') {
+          updateBoardStatus('player2');
+        } else if (currBoardStatus === 'full') {
+          updateBoardStatus('full');
+        }
       }
     }
-  }, [boardData, nons]);
+  }, );
 
 
   return (
     <div>
       <BoardContainer>
-        {nons.map((placement, index) => (
+        {boardArray.map((placement, index) => (
           <Ninth key={index} ninthNum={placement.ninth} value={placement.value} />
         ))}
       </BoardContainer>

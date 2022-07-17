@@ -1,33 +1,62 @@
 import React from "react";
-import axios from "axios";
 import styled from "styled-components";
 import { useData } from "../Context";
 
 const Ninth = ({ ninthNum, value }) => {
-  const {socket, boardData, playerValue, getData, handleClick} = useData();
+  const {
+    user,
+    turn,
+    getPlayerValue,
+    handleClick,
+  } = useData();
 
   const checkClick = (e) => {
     if (value === '') {
-      handleClick({[ninthNum]: playerValue});
+      handleClick({ [ninthNum]: getPlayerValue() });
     }
   }
 
   return (
     <NonaContainer>
-      <Button onClick={checkClick}><h1>{value}</h1></Button >
+      {user === turn
+        ?
+        <TurnButton onClick={checkClick}>
+          <PlayerValueStyle>{value}</PlayerValueStyle>
+        </TurnButton >
+        :
+        <WaitButton onClick={checkClick}>
+          <PlayerValueStyle>{value}</PlayerValueStyle>
+        </WaitButton >
+      }
     </NonaContainer>
   );
 };
 
 export default Ninth;
 
- const NonaContainer = styled.div`
+const PlayerValueStyle = styled.h1`
+font weight: 900;
+`;
+
+const NonaContainer = styled.div`
 display: flex;
 justify-content: center;
 border: solid gray;
 `;
-const Button = styled.button`
+const WaitButton = styled.button`
 border: none;
 cursor: pointer;
 width: 100%;
+`; 
+const TurnButton = styled.button`
+border: none;
+cursor: pointer;
+width: 100%;
+&:hover,
+&:focus {
+  color: palevioletred;
+}
+&:active {
+  color: red;
+}
 `;
