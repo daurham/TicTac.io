@@ -10,11 +10,8 @@ export default function App() {
   const {
     socket,
     boardData,
-    // setboardData,
     players,
-    // setPlayers,
     user,
-    // setUser,
     turn,
     setTurn,
     status,
@@ -25,22 +22,9 @@ export default function App() {
     wipeBoard,
     updateBoardStatus,
     getPlayerValue,
-    // nons,
-    // setPlayerValue,
-    // player1,
-    // player2,
-    // setPlayer1,
-    // setPlayer2,
-    // setOpponentValue,
-    // opponentValue,
-    // winner,
-    // isWinner,
-    // fullBoard,
-    // foundFullBoard,
-    // foundWinner,
   } = useData();
 
-  const [input, setInput] = useState();
+  const [input, setInput] = useState('Jini?');
   const [msg, setmsg] = useState();
   const [round, setRound] = useState([]);
 
@@ -106,7 +90,7 @@ export default function App() {
     if (turn !== name) {
       setTurn(name);
     }
-  };
+  }; 
 
   const toggleTurnFn = (name) => {
     setTurn(name);
@@ -217,14 +201,19 @@ export default function App() {
     user,
   ]);
 
+  useEffect(() => console.log('useEffectrerenderingggBD'), [boardData]); // TEST
+  useEffect(() => console.log('useEffectrerenderinggg ~~')); // TEST
+
   return (
     <AppContainer>
+      {console.log('rerender')/* TEST */ }
 
       <Title>TicTac.io</Title>
 
       <GameStatusContainer>
         <Plist>{updatePlayerList()}</Plist>
-        {user ? <PVal hidden={foundWinner() || boardIsFull()} >Player: {getPlayerValue()}</PVal> : <div><InptSt onChange={(e) => setInput(e.target.value)} type="text" /><BtnSt onClick={() => submitPlayer(input)} type="submit">Sumbit</BtnSt></div>}
+        <br />
+        {user ? <PVal hidden={foundWinner() || boardIsFull()} >Player: {getPlayerValue()}</PVal> : <JoinBar><InptSt onClick={(e) => setInput('')} onChange={(e) => setInput(e.target.value)} placeholder={'name'}  value={input}  type="text" /><BtnSt onClick={() => submitPlayer(input || 'Jini?')} type="submit">Join</BtnSt></JoinBar>}
         {foundWinner() || boardIsFull() ? null : (!msg ? <Status>{updateGameStatus()}</Status> : <Status>{msg}</Status>)}
         {!foundWinner() ? null : <div><BigStatus>{getWinner().toUpperCase()} WON!</BigStatus><BtnSt onClick={() => wipeBoard(true)}>Reset</BtnSt></div>}
         {!boardIsFull() ? null : <div><BigStatus>{drawStatus()}</BigStatus><BtnSt onClick={wipeBoard}>Reset</BtnSt></div>}
@@ -239,24 +228,49 @@ export default function App() {
   );
 };
 
-const AppContainer = styled.div``;
-const GameContainer = styled.div``;
-const GameStatusContainer = styled.div``;
+const AppContainer = styled.div`
+justify-content: center;
+align: center;
+`;
+const GameContainer = styled.div`
+display: flex;
+justify-content: center;
+`;
+const GameStatusContainer = styled.div`
+display: flex;
+flex-direction: column;
+justify-content: center;
+`;
 
 
 const PVal = styled.h6`
+display: flex;
   margin: 7px;
+  justify-content: center;
   `;
 const Plist = styled.h5`
+  display: flex;
+  justify-content: center;
   margin: 3px;
   `;
-const Status = styled.h4`
+  const Status = styled.h4`
+  display: flex;
+  justify-content: center;
   margin: 3px;
   `;
-const BigStatus = styled.h2`
+  const BigStatus = styled.h2`
+  display: flex;
+  justify-content: center;
   margin: 0px;
   `;
 const Title = styled.h1`
+  display: flex;
+  justify-content: center;
+  margin: 0px;
+  `;
+const JoinBar = styled.div`
+  display: flex;
+  justify-content: center;
   margin: 0px;
   `;
 const BtnSt = styled.button`

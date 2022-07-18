@@ -11,20 +11,12 @@ export default function Context() {
 	const [players, setPlayers] = useState([]);
 	const [user, setUser] = useState();
 	const [turn, setTurn] = useState();
-	const [status, setStatus] = useState(); // fullBoard / winner state
-	// const [socket, setSocket] = useState(); // import
-	// const [nons, setNons] = useState();// function
-	// const [playerValue, setPlayerValue] = useState('X'); // players
-	// const [player1, setPlayer1] = useState(); // players
-	// const [player2, setPlayer2] = useState();  // players
-	// const [opponentValue, setOpponentValue] = useState(); // players
-	// const [fullBoard, foundFullBoard] = useState(false);
-	// const [winner, setWinner] = useState(false);
+	const [status, setStatus] = useState();
 
-
-
-
+ 
 	const updateBoard = (data) => {
+
+		console.log(boardData, data, players); // TEST
 		setboardData(prevBoard => {
 			for (let newKey in data) {
 				for (let oldKey in prevBoard) {
@@ -35,6 +27,7 @@ export default function Context() {
 			}
 			return prevBoard;
 		});
+		console.log(makeBoardArray()); // TEST
 	};
 
 	const updateBoardStatus = (stat) => {
@@ -51,25 +44,24 @@ export default function Context() {
 	};
 
 	const updatePlayers = (playerData) => {
-		// removing player by name
-		if (playerData == null) {
-			console.log('Got your ass');
-		} else if (typeof playerData === 'string') { 
-			setPlayers((oldPlayers) => {
-				let updatedPlayers = {};
-				for (let key in oldPlayers) {
-					if (oldPlayers[key]) {
-						if (oldPlayers[key].name !== playerData) {
-							updatedPlayers[key] = oldPlayers[key];
+		if (playerData) {
+			if (typeof playerData === 'string') { 
+				setPlayers((oldPlayers) => {
+					let updatedPlayers = {};
+					for (let key in oldPlayers) {
+						if (oldPlayers[key]) {
+							if (oldPlayers[key].name !== playerData) {
+								updatedPlayers[key] = oldPlayers[key];
+							}
 						}
 					}
-				}
-				return updatedPlayers;
-			});
-		} else { // updating player state
-			setPlayers(() => {
-				return playerData;
-			});
+					return updatedPlayers;
+				});
+			} else { // updating player state
+				setPlayers(() => {
+					return playerData;
+				});
+			}
 		}
 	};
 
@@ -161,20 +153,6 @@ export default function Context() {
 		handleClick,
 		updateBoard,
 		wipeBoard,
-		// nons,
-		// playerValue,
-		// player1,
-		// setPlayer1,
-		// player2,
-		// setPlayer2,
-		// setOpponentValue,
-		// opponentValue,
-		// winner,
-		// isWinner,
-		// foundWinner,
-		// fullBoard,
-		// foundFullBoard,
-		// setWinner,
 	}),
 		[
 			boardData,
@@ -182,21 +160,15 @@ export default function Context() {
 			status,
 			user,
 			turn,
-			// nons,
-			// players,
-			// playerValue,
-			// player1,
-			// player2,
-			// isWinner,
-			// winner,
-			// fullBoard
 		]);
+
+		useEffect(() => console.log('LocalUEf'), [boardData]); // TEST
 
 
 	return !boardData ? null : (
 		<>
 			<contextData.Provider value={value}>
-				<App />
+				<App bd={boardData}/>
 			</contextData.Provider>
 		</>
 	);
