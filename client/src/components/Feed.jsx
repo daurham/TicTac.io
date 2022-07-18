@@ -20,22 +20,6 @@ export default function Feed() {
     socket.emit('message', input);
     setInput('');
   };
-
-
-
-  // useEffect(() => {
-  //   socket.on('connect', () => {
-  //     // console.log(socket.id); // Here I have access to socket.id 
-  //   });
-
-  //   socket.on('disconnect', () => {
-  //   });
-
-  //   return () => { // cleanup
-  //     socket.off('connect');
-  //     socket.off('disconnect');
-  //   };
-  // }, []);
   
 
   return (
@@ -43,7 +27,7 @@ export default function Feed() {
       {/* <h1>Chat App</h1> */}
       <input type="text" value={input} onChange={handleInput} />
       <button onClick={handleClick}>Post</button>
-      <ul>
+      <ul style={{"list-style-type": "none"}}>
         {feed.map((msg, index) => (
           <li key={index}>{msg}</li>
         ))}

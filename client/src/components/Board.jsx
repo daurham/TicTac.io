@@ -30,14 +30,20 @@ const Board = () => {
         }
       }
     }
-  }, );
+  });
 
+  console.log(boardArray); // TEST
 
   return (
     <div>
       <BoardContainer>
         {boardArray.map((placement, index) => (
-          <Ninth key={index} ninthNum={placement.ninth} value={placement.value} />
+          <Ninth  
+          key={index} 
+          ninthNum={placement.ninth} 
+          value={placement.value} 
+          
+        />
         ))}
       </BoardContainer>
     </div>

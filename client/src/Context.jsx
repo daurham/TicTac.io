@@ -11,11 +11,12 @@ export default function Context() {
 	const [players, setPlayers] = useState([]);
 	const [user, setUser] = useState();
 	const [turn, setTurn] = useState();
-	const [status, setStatus] = useState(); // fullBoard / winner state
+	const [status, setStatus] = useState();
 
-
-
+ 
 	const updateBoard = (data) => {
+
+		console.log(boardData, data, players); // TEST
 		setboardData(prevBoard => {
 			for (let newKey in data) {
 				for (let oldKey in prevBoard) {
@@ -26,6 +27,7 @@ export default function Context() {
 			}
 			return prevBoard;
 		});
+		console.log(makeBoardArray()); // TEST
 	};
 
 	const updateBoardStatus = (stat) => {
@@ -42,24 +44,24 @@ export default function Context() {
 	};
 
 	const updatePlayers = (playerData) => {
-		if (playerData == null) {
-			return;
-		} else if (typeof playerData === 'string') { 
-			setPlayers((oldPlayers) => {
-				let updatedPlayers = {};
-				for (let key in oldPlayers) {
-					if (oldPlayers[key]) {
-						if (oldPlayers[key].name !== playerData) {
-							updatedPlayers[key] = oldPlayers[key];
+		if (playerData) {
+			if (typeof playerData === 'string') { 
+				setPlayers((oldPlayers) => {
+					let updatedPlayers = {};
+					for (let key in oldPlayers) {
+						if (oldPlayers[key]) {
+							if (oldPlayers[key].name !== playerData) {
+								updatedPlayers[key] = oldPlayers[key];
+							}
 						}
 					}
-				}
-				return updatedPlayers;
-			});
-		} else { // updating player state
-			setPlayers(() => {
-				return playerData;
-			});
+					return updatedPlayers;
+				});
+			} else { // updating player state
+				setPlayers(() => {
+					return playerData;
+				});
+			}
 		}
 	};
 
@@ -160,11 +162,13 @@ export default function Context() {
 			turn,
 		]);
 
+		useEffect(() => console.log('LocalUEf'), [boardData]); // TEST
+
 
 	return !boardData ? null : (
 		<>
 			<contextData.Provider value={value}>
-				<App />
+				<App bd={boardData}/>
 			</contextData.Provider>
 		</>
 	);

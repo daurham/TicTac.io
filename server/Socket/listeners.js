@@ -1,13 +1,10 @@
-const io = require('./Socket').getIO();
-const clients = require('./Clients');
-
-const MODE = require('dotenv').config().parsed.NODE_ENV;
-console.log(MODE)
+const io = require('./index').getIO();
+const clients = require('../Clients');
 
 
 io.on('connection', (socket) => {
   clients.add(socket.id);
-  console.log('List of', clients);
+  // console.log(clients); // Testing
 
   socket.on('connect', () => { });
 
@@ -45,6 +42,7 @@ io.on('connection', (socket) => {
   socket.on('move', (move) => {
     io.emit('move', move);
     let currUser = clients.getName(socket.id);
+    console.log('move: ', move)
     io.emit('announcer', `${currUser} made a move!`);
   });
 
@@ -55,15 +53,15 @@ io.on('connection', (socket) => {
   socket.on('getTurn', () => {
     let player1 = clients.getName('player1');
     let player2 = clients.getName('player2');
-    if (clients.turn !== player1 && clients.turn !== player2) {
-      clients.turn = player1;
+    if (clients.Turn !== player1 && clients.Turn !== player2) {
+      clients.Turn = player1;
     }
-    io.emit('getTurn', clients.turn);
+    io.emit('getTurn', clients.Turn);
   });
 
   socket.on('toggleTurn', () => {
     console.log('It\'s ' + clients.toggleTurn() + '\'s turn');
-    io.emit('toggleTurn', clients.turn);
+    io.emit('toggleTurn', clients.Turn);
   });
 
   socket.on('updateBoardStatus', (stat) => {
