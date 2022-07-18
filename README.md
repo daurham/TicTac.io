@@ -57,7 +57,7 @@ npm run dev-client
 npm run dev-server
 ```
 <div align="center">
-created by: 
+created by:
 
 [Jake Daurham](https://github.com/daurham)
 

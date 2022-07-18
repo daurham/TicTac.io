@@ -22,11 +22,16 @@ export default function App() {
     wipeBoard,
     updateBoardStatus,
     getPlayerValue,
+    updateTurn,
+    updateStatus,
   } = useData();
 
-  const [input, setInput] = useState('Jini?');
+  const [input, setInput] = useState('Jini');
+  const [hideChat, toggleChat] = useState(false);
   const [msg, setmsg] = useState();
   const [round, setRound] = useState([]);
+  // const [gotWinner, setGotWinner] = useState(false);
+  // let gotWinner;
 
   const updateGameStatus = () => {
     const { player1, player2 } = players;
@@ -40,6 +45,7 @@ export default function App() {
   };
 
   const updatePlayerList = () => {
+    // console.log(players);
     const { player1, player2 } = players;
     if (player1 && !player2) {
       return `Player1: ${player1.name} Player2: ...`;
@@ -59,13 +65,13 @@ export default function App() {
       return false;
     }
   };
-  
+
   const getWinner = () => {
     if (status === 'player1' || status === 'player2') {
       return players[status].name;
     }
   };
-  
+
   const boardIsFull = () => {
     if (status === 'full') {
       return true;
@@ -73,12 +79,19 @@ export default function App() {
       return false;
     }
   };
-  
+
   const drawStatus = () => {
     let responses = ['WE HAVE A DRAWL', 'BOFF YALL LOST'];
     return responses[Math.floor(Math.random() * responses.length)]
   };
 
+  const getScores = () => {
+    return;
+    const { player1, player2 } = players;
+    if (player1 && player2) {
+      return `X: ${player1.score} O: ${player2.score}`;
+    }
+  }
 
 
 
@@ -87,13 +100,15 @@ export default function App() {
   };
 
   const getTurnFn = (name) => {
+    // console.log('getTurn Recieved ->', name);
     if (turn !== name) {
-      setTurn(name);
+      updateTurn(name);
     }
-  }; 
+  };
 
   const toggleTurnFn = (name) => {
-    setTurn(name);
+    // console.log('toggleTurn Recieved ->', name);
+    updateTurn(name);
   };
 
   const addPlayer1Fn = useCallback((players) => {
@@ -128,11 +143,12 @@ export default function App() {
       ninth7: "",
       ninth8: "",
       ninth9: ""
-    });
+    }, true);
   };
 
   const updateBoardStatusFn = (stat) => {
-    setStatus(stat);
+    // console.log('status updater: ', stat);
+    updateStatus(stat);
   };
 
   const connectFn = useCallback(() => {
@@ -199,29 +215,81 @@ export default function App() {
     players,
     turn,
     user,
+    hideChat,
   ]);
 
-  useEffect(() => console.log('useEffectrerenderingggBD'), [boardData]); // TEST
-  useEffect(() => console.log('useEffectrerenderinggg ~~')); // TEST
+  // useEffect(() => {
+  //   // if (foundWinner() && !gotWinner) {
+  //     // gotWinner = getWinner();
+
+  //     // setGotWinner(val => !val);
+  //   // }
+  //   console.log('uE Status change!- val: ', status);
+  // }, [status, boardData]);
+
+  // useEffect(() => console.log('useEffectrerenderingggBD, Chat: ',), [boardData, hideChat]); // TEST
+  // useEffect(() => console.log('uE Status change!: ', status), [status]); // TEST
+  // useEffect(() => console.log('uE listening HORD: ')); // TEST
 
   return (
     <AppContainer>
-      {console.log('rerender')/* TEST */ }
+      {/* {console.log('rerender')/* TEST */}
 
       <Title>TicTac.io</Title>
 
       <GameStatusContainer>
+
         <Plist>{updatePlayerList()}</Plist>
-        <br />
-        {user ? <PVal hidden={foundWinner() || boardIsFull()} >Player: {getPlayerValue()}</PVal> : <JoinBar><InptSt onClick={(e) => setInput('')} onChange={(e) => setInput(e.target.value)} placeholder={'name'}  value={input}  type="text" /><BtnSt onClick={() => submitPlayer(input || 'Jini?')} type="submit">Join</BtnSt></JoinBar>}
-        {foundWinner() || boardIsFull() ? null : (!msg ? <Status>{updateGameStatus()}</Status> : <Status>{msg}</Status>)}
-        {!foundWinner() ? null : <div><BigStatus>{getWinner().toUpperCase()} WON!</BigStatus><BtnSt onClick={() => wipeBoard(true)}>Reset</BtnSt></div>}
-        {!boardIsFull() ? null : <div><BigStatus>{drawStatus()}</BigStatus><BtnSt onClick={wipeBoard}>Reset</BtnSt></div>}
+
+        {user ?
+          <ScoreBoard
+            hidden={!status} >
+            {/* {getScores()} */}
+          </ScoreBoard>
+          :
+          <JoinBar>
+            <InptSt
+              onClick={(e) => setInput('Jake')}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={'name'}
+              value={input}
+              type="text"
+            />
+            <BtnSt
+              onClick={(e) => { e.preventDefault(); submitPlayer(input || 'Jini?') }}
+              type="submit">
+              Join
+            </BtnSt>
+          </JoinBar>
+        }
+
+        {status ? null : (!msg ?
+          <Status>{updateGameStatus()}</Status>
+          :
+          <Status>{msg}</Status>)
+        }
+
+        {(status !== 'player1' && status !== 'player2') ? null
+          :
+          <div><BigStatus>{getWinner().toUpperCase()} WON!</BigStatus>
+            <BtnSt onClick={(e) => { e.preventDefault(); wipeBoard() }}>Reset</BtnSt>
+          </div>
+        }
+
+        {(status !== 'full') ? null
+          :
+          <div>
+            <BigStatus>{drawStatus()}</BigStatus>
+            <BtnSt onClick={wipeBoard}>Reset</BtnSt>
+          </div>
+        }
+
       </GameStatusContainer>
 
       <GameContainer>
         <Board />
-        <Feed />
+        <Feed hidden={hideChat} />
+        <ChatBtn onClick={() => toggleChat(show => !show)} >{!hideChat ? ">" : "<"}</ChatBtn>
       </GameContainer>
 
     </AppContainer>
@@ -243,7 +311,7 @@ justify-content: center;
 `;
 
 
-const PVal = styled.h6`
+const ScoreBoard = styled.div`
 display: flex;
   margin: 7px;
   justify-content: center;
@@ -253,12 +321,12 @@ const Plist = styled.h5`
   justify-content: center;
   margin: 3px;
   `;
-  const Status = styled.h4`
+const Status = styled.h4`
   display: flex;
   justify-content: center;
   margin: 3px;
   `;
-  const BigStatus = styled.h2`
+const BigStatus = styled.h2`
   display: flex;
   justify-content: center;
   margin: 0px;
@@ -268,12 +336,15 @@ const Title = styled.h1`
   justify-content: center;
   margin: 0px;
   `;
-const JoinBar = styled.div`
+const JoinBar = styled.form`
   display: flex;
   justify-content: center;
   margin: 0px;
   `;
 const BtnSt = styled.button`
+  // margin: 3px;
+  `;
+const ChatBtn = styled.button`
   // margin: 3px;
   `;
 const InptSt = styled.input`

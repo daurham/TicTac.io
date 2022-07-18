@@ -4,7 +4,7 @@ const clients = require('../Clients');
 
 io.on('connection', (socket) => {
   clients.add(socket.id);
-  // console.log(clients); // Testing
+  console.log(clients); // Testing
 
   socket.on('connect', () => { });
 
@@ -42,11 +42,12 @@ io.on('connection', (socket) => {
   socket.on('move', (move) => {
     io.emit('move', move);
     let currUser = clients.getName(socket.id);
-    console.log('move: ', move)
+    // console.log('move: ', move)
     io.emit('announcer', `${currUser} made a move!`);
   });
 
   socket.on('wipe', (freshBoard) => {
+    // console.log('wiping!');
     io.emit('wipe', freshBoard);
   });
 
@@ -61,10 +62,14 @@ io.on('connection', (socket) => {
 
   socket.on('toggleTurn', () => {
     console.log('It\'s ' + clients.toggleTurn() + '\'s turn');
+    // console.log('emitting -> ', clients.Turn);
+    // console.log('emitting -> ', clients.Turn);
     io.emit('toggleTurn', clients.Turn);
   });
 
-  socket.on('updateBoardStatus', (stat) => {
+  socket.on('updateBoardStatus', ({ stat, score }) => {
+    // if (clients.find(stat)) clients.find(stat).score = score; // increments backend score
+    // console.log('status? -> ', stat);
     io.emit('updateBoardStatus', stat);
   });
 

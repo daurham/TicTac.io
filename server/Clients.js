@@ -14,6 +14,7 @@ class Clients {
     this.List[max] = { id, player, name };
     if (player === 'player1') this.find(player).playerValue = 'X'
     if (player === 'player2') this.find(player).playerValue = 'O'
+    if (player) this.find(player).score = 0;
     this.initializeTurn();
   }
 
@@ -74,7 +75,10 @@ class Clients {
     let player1 = this.getName('player1');
     let player2 = this.getName('player2');
     let turn = this.Turn;
-    turn = (turn === player1 ? player2 : player1);
+    // console.log('1', turn);
+    this.Turn = (turn === player1 ? player2 : player1);
+    // console.log('2', turn);
+    // console.log('changed? :', turn === this.Turn);
     return turn;
   }
 
@@ -86,18 +90,18 @@ class Clients {
     let turn = this.Turn;
     if (player1) {
       if (!turn) {
-        turn = p1name;
+        this.Turn = p1name;
       } else if (turn !== p1name && turn !== p2name) {
-        turn = p1name;
+        this.Turn = p1name;
       }
     } else if (player2) {
       if (!turn) {
-        turn = p2name;
+        this.Turn = p2name;
       } else if (turn !== p1name && turn !== p2name) {
-        turn = p2name;
+        this.Turn = p2name;
       }
     } else {
-      turn = null;
+      this.Turn = null;
     }
   }
 };
