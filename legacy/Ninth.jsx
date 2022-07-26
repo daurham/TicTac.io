@@ -1,14 +1,17 @@
 import React from "react";
+import { useStoreState } from "easy-peasy";
 import styled from "styled-components";
 import { useData } from "../Context";
 
 const Ninth = ({ ninthNum, value }) => {
   const {
+    handleClick,
+    getPlayerValue,
+  } = useData();
+  const {
     user,
     turn,
-    getPlayerValue,
-    handleClick,
-  } = useData();
+  } = useStoreState((state) => state.boardState);
 
   const checkClick = (e) => {
     if (value === '') {

@@ -13,7 +13,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     let currUser = clients.getName(socket.id);
     console.log(`${currUser} has disconnected`);
-    io.emit('disconnectPlayer', currUser);
+    io.emit('disconnectPlayer', socket.id);
     clients.remove(socket.id);
     clients.remove(currUser);
   });
@@ -25,13 +25,19 @@ io.on('connection', (socket) => {
   socket.on('addPlayer1', (name) => {
     console.log(name, ' joined as player1');
     clients.add(socket.id, name, 'player1');
-    io.emit('addPlayer1', clients.getPlayers());
+    io.emit('addPlayer', clients.getPlayers());
   });
+
+  // socket.on('addPlayer', (name) => {
+  //   console.log('Challenger appraoching: ', name);
+  //   clients.add(socket.id, name, 'player1');
+  //   io.emit('addPlayer', clients.getPlayers());
+  // });
 
   socket.on('addPlayer2', (name) => {
     console.log(name, ' joined as player2');
     clients.add(socket.id, name, 'player2');
-    io.emit('addPlayer2', clients.getPlayers());
+    io.emit('addPlayer', clients.getPlayers());
   });
 
   socket.on('message', (message) => {
@@ -46,9 +52,9 @@ io.on('connection', (socket) => {
     io.emit('announcer', `${currUser} made a move!`);
   });
 
-  socket.on('wipe', (freshBoard) => {
+  socket.on('clear board', () => {
     // console.log('wiping!');
-    io.emit('wipe', freshBoard);
+    io.emit('clear board');
   });
 
   socket.on('getTurn', () => {

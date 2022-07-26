@@ -7,6 +7,7 @@ export default function Feed({ hidden }) {
   const [input, setInput] = useState('');
   const [feed, setFeed] = useState([]);
 
+  console.log('HIDDEN: ', hidden)
 
   socket.on('message', (text) => {
     setFeed([text, ...feed]);
@@ -27,7 +28,7 @@ export default function Feed({ hidden }) {
   return (
     <div>
       {
-        !hidden ?
+        hidden ?
           null
           :
           <ChatContainer>
