@@ -1,5 +1,5 @@
 import { Action, action, actionOn, ActionOn, Thunk, thunk } from "easy-peasy";
-import statusesModel from "./statuses";
+// import statusesModel from "./statuses";
 
 type Player = {
   id: string;

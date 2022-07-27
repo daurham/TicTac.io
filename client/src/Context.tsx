@@ -1,25 +1,14 @@
-import React, { useState, useMemo, useEffect, useContext, createContext } from 'react';
+import React, { useContext, createContext } from 'react';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import App from './components/App';
 import { socket } from './Socket';
 
-type Socket = React.ReactNode | string | null;
-type React.ProviderProps
 
-
-const contextData = createContext(null);
+const contextData = createContext(socket);
 export const useData = () => useContext(contextData);
 
 
-type Props = {}
-
-
-
-// const value:Socket = socket;
-useMemo(() => ({socket}),
-  [socket]);
-
-const Context: React.FC<{}> = (props: Props) => {
+const Context: React.FC = () => {
   return (
     <div>
       Context
@@ -27,7 +16,6 @@ const Context: React.FC<{}> = (props: Props) => {
         <App />
       </contextData.Provider>
     </div>
-  )
-}
-
+  );
+};
 export default Context

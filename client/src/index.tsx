@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './components/App';
 import { StoreProvider } from 'easy-peasy';
-import store from './Redux/store';
+import store from './Redux';
 // import Context from './Context';
 
 const app = document.getElementById('app')!;
