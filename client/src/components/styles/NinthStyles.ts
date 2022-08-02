@@ -37,12 +37,14 @@ export const WaitButton = styled.button`
 background-color: unset;
 border: none;
 cursor: pointer;
+height: 15vh;
 width: 100%;
 `;
 export const TurnButton = styled.button`
 background-color: unset;
 border: none;
 cursor: pointer;
+height: 15vh;
 width: 100%;
 &:hover,
 &:focus {

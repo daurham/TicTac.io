@@ -13,7 +13,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     let currUser = clients.getName(socket.id);
     console.log(`${currUser} has disconnected`);
-    io.emit('disconnectPlayer', socket.id);
+    io.emit('disconnectPlayer', clients.find(socket.id));
     clients.remove(socket.id);
     clients.remove(currUser);
   });
@@ -42,7 +42,9 @@ io.on('connection', (socket) => {
 
   socket.on('message', (message) => {
     let currUser = clients.getName(socket.id);
-    io.emit('message', `${currUser}: ${message}`);
+    let newMsg = { name: currUser, message };
+    console.log('new msg: ', newMsg, 'from: ', currUser);
+    io.emit('message', newMsg);
   });
 
   socket.on('move', (move) => {

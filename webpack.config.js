@@ -1,9 +1,11 @@
-const MODE = require('dotenv').config().parsed.NODE_ENV || 'development';
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MODE = require('dotenv').config().parsed.NODE_ENV || 'development';
+const URL = require('dotenv').config().parsed.URL || 'localhost';
+const SVRPORT = require('dotenv').config().parsed.PORT || 3000;
+const WPPORT = 8080;
 
 
-//* 
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   entry: path.resolve(__dirname, './client/src/index.tsx'),
@@ -45,64 +47,8 @@ module.exports = {
       template: path.resolve(__dirname, './client/dist/index.html'),
     }),
   ],
-}
-
-
-//*/
-
-
-/*  
-module.exports = {
-  entry: './client/src',
-  mode: MODE,
-  module: {
-    rules: [
-      {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/,
-      },
-    ],
-  },
-  resolve: {
-    extensions: ['.tsx', '.ts', '.js', '.jsx'],
-  },
-  output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'client/dist'),
+  devServer: {
+    port: 8080,
   },
 };
-//*/
 
-/* 
-const MODE = require('dotenv').config().parsed.NODE_ENV || 'development';
-const DIST = path.join(__dirname, 'client/dist');
-const SRC = path.join(__dirname, 'client/src');
-
-module.exports = {
-  entry: SRC,
-  output: {
-    path: DIST,
-    filename: 'bundle.js'
-  },
-  mode: MODE,
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx)?/,
-        exclude: /node_modules/,
-        loader: 'babel-loader',
-        options: {
-          presets: ['@babel/preset-env', '@babel/preset-react'],
-          plugins: [
-            ['@babel/plugin-transform-runtime', { regenerator: true }],
-          ],
-        },
-      }
-    ]
-  },
-  resolve: {
-    extensions: ['.js', '.jsx'],
-  },
-};
- */
