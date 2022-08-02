@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node server/index.js",
     "build": "webpack",
-    "dev-client": "webpack --config webpack.config.js",
+    "dev-client-deprecated": "webpack --config webpack.config.js",
     "dev-client-s": "webpack serve --config webpack.config.js --open ",
     "dev-server": "nodemon server/index.js",
     "tsc": "tsc",
