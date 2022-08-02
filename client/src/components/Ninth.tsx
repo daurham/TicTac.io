@@ -26,8 +26,8 @@ const Ninth = ({ ninthNum, value }: Props) => {
   const turn = useStoreState(state => state.statuses.turn);
   const gameStatus = useStoreState(state => state.statuses.gameStatus);
   const playerValue = useStoreState(state => state.user.userSession.playerValue);
-  const ninthVal = ninthNum.slice(-1); 
-  
+  const ninthVal = ninthNum.slice(-1);
+
   const handleClick = (updateData: NinthUpdateData) => {
     if (user) {
       if (turn === user
@@ -46,7 +46,6 @@ const Ninth = ({ ninthNum, value }: Props) => {
     }
   };
 
-  // console.log(user, turn)
 
   return (
     <div>

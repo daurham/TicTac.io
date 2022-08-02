@@ -19,6 +19,7 @@ type Props = {};
 
 const Header = (props: Props) => {
   const user = useStoreState(state => state.user.userSession.user);
+  
   const {
     turn,
     winner,
@@ -74,10 +75,6 @@ const Header = (props: Props) => {
     socket.emit('clear board');
   };
 
-  // useEffect(() => {
-  // socket.on('clear board', clearBoard)
-  // }, [boardLayout]);
-
   useEffect(() => {
     if (players) {
       if (!(player1 && player2)) {
@@ -95,10 +92,10 @@ const Header = (props: Props) => {
       <GameStatusContainer>
 
         <Plist>{updatePlayerList()}</Plist>
-        {(gameStatus === 'preGame' || gameStatus === 'inGame') 
-        ?
-        <Plist>{turnStatus}</Plist>
-        : null}
+        {(gameStatus === 'preGame' || gameStatus === 'inGame')
+          ?
+          <Plist>{turnStatus}</Plist>
+          : null}
 
         {user ?
           <ScoreBoard
@@ -111,7 +108,8 @@ const Header = (props: Props) => {
 
         {(gameStatus !== 'hasWinner') ? null
           :
-          <div><BigStatus>{winner!.toUpperCase()} WON!</BigStatus>
+          <div>
+            <BigStatus>{winner!.toUpperCase()} WON!</BigStatus>
             <BtnSt onClick={(e) => { e.preventDefault(); emitClearBoard(); }}>Reset</BtnSt>
           </div>
         }

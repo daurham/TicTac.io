@@ -1,5 +1,4 @@
 import { Action, action, actionOn, ActionOn, Thunk, thunk } from "easy-peasy";
-// import statusesModel from "./statuses";
 
 type Player = {
   id: string;
@@ -13,7 +12,6 @@ type PlayerStatObj = {
   player: 'player1' | 'player2';
   name: string;
 }
-
 
 interface PlayersObj {
   player1: Player | null;
@@ -29,7 +27,6 @@ export interface PlayersModel {
   updatePlayers: Thunk<PlayersModel, PlayersObj>;
   onRemovePlayer: ActionOn<PlayersModel>;
   handlePlayerStatus?: Thunk<PlayersModel, PlayersObj>;
-  // listeners: Listen<PlayersModel>;
 }
 
 const players: PlayersModel = {
@@ -68,24 +65,10 @@ const players: PlayersModel = {
       actions.addPlayer(payload[currPlayer as keyof PlayersObj]!);
     }
   }),
-  // onRemovePlayer: actionOn(actions => actions.removePlayer,(state, target) => {});
   onRemovePlayer: actionOn(actions => actions.removePlayer,
     (state, target) => {
-      // statusesModel.updatePlayerStatus(target.payload);
       console.log(target.payload, 'Player Removed, in players.ts')
     }),
-  // hanldePlayerStatus: thunk((actions, payload) => {
-    // if (Object.keys(payload).length === 0) return;
-    // for (let currPlayer in payload) {
-      // actions.addPlayer(payload[currPlayer as keyof PlayersObj]!);
-    // }
-  // }),
-  
-  // listen(on => {
-  //   on(todosModel.add, thunk((actions, payload) => {
-  //     actions.set(`Added "${payload}" to todos`);
-  //   }));
-  // })
 };
 
 export default players;

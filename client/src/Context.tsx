@@ -1,5 +1,4 @@
 import React, { useContext, createContext } from 'react';
-import { useStoreActions, useStoreState } from 'easy-peasy';
 import App from './components/App';
 import { socket } from './Socket';
 

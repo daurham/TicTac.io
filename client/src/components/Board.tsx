@@ -23,7 +23,6 @@ const Board = (props: Props) => {
   const {
     updateWinner,
     updateGameStatus,
-    // updateBoardStatus,
   } = useStoreActions((actions) => actions.statuses);
 
   const makeBoardArray = (): BoardArray => {
@@ -32,7 +31,7 @@ const Board = (props: Props) => {
       let elem: BoardArrElem = {
         ninth: `ninth${String(index + 1)}`,
         value: boardLayout[`ninth${index + 1}` as keyof typeof boardLayout]
-      }; // MAY BE WRONG
+      };
       return elem;
     });
     return result;
@@ -41,19 +40,16 @@ const Board = (props: Props) => {
   useEffect(() => {
     if (player1 && player2) {
       let currBoardStatus = checkBoardStatus(makeBoardArray(), player1, player2);
-      // console.log('currStat On Board', currBoardStatus);
+
       if (currBoardStatus) {
 
         if (currBoardStatus === 'player1') {
           updateWinner(player1.name);
-          // updateBoardStatus('hasWinner');
           updateGameStatus('hasWinner');
         } else if (currBoardStatus === 'player2') {
           updateWinner(player2.name);
-          // updateBoardStatus('hasWinner');
           updateGameStatus('hasWinner');
         } else if (currBoardStatus === 'full') {
-          // updateBoardStatus('fullBoard');
           updateGameStatus('draw');
         }
       }

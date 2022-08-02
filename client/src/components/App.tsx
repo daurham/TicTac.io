@@ -1,11 +1,23 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { useStoreActions, useStoreState } from '../Redux'
 import { useData } from '../Context';
-import { AppContainer, GameContainer, ChatBtn } from './styles/AppStyles';
+import { AppContainer, GameContainer, ChatBtn, ChatBtnNotify } from './styles/AppStyles';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMessage, faAnchor, faAnchorCircleExclamation, faAnchorCircleCheck, faAnchorCircleXmark, faAnchorLock } from '@fortawesome/free-solid-svg-icons'
 import Board from './Board';
 import Feed from './Feed';
 import Header from './Header';
 import Footer from './Footer';
+
+// import {
+//   IconLookup,
+//   IconDefinition,
+//   findIconDefinition
+// } from '@fortawesome/fontawesome-svg-core'
+
+// const coffeeLookup: IconLookup = { prefix: 'fas', iconName: 'coffee' }
+// const coffeeIconDefinition: IconDefinition = findIconDefinition(coffeeLookup)
+
 
 
 type PlayerObj = {
@@ -26,7 +38,7 @@ const App: React.FC = () => {
   const socket = useData();
   const state = useStoreState(state => state);
   const actions = useStoreActions(actions => actions);
-  const [openChatSymbol, setOpenChatSymbol] = useState('>')
+  const [openChatSymbol, setOpenChatSymbol] = useState<any>()
 
   // State
   const { boardLayout } = state.board;
@@ -58,7 +70,7 @@ const App: React.FC = () => {
 
 
 
-  const checkUpdates = (stat?: string):void => {
+  const checkUpdates = (stat?: string): void => {
     if (stat === 'newGame') {
       updateWinner(null);
     }
@@ -95,55 +107,26 @@ const App: React.FC = () => {
     updateTurn(name);
   };
 
-  // const addPlayer1Fn = useCallback((players) => {
-  //   const { player1 } = players;
-  //   if (player1) {
-  //     updatePlayers(players);
-  //   }
-  // }, [players])
-
-  // const addPlayer2Fn = useCallback((players) => {
-  //   const { player2 } = players;
-  //   if (player2) {
-  //     updatePlayers(players);
-  //   }
-  // }, [players])
 
   const addPlayerFn = useCallback((players: PlayersObj) => {
     // console.log('Adding player: ', players);
     updatePlayers(players);
     checkGameStatus();
-    // console.log('Total PlayersCount: ', Object.keys(players).length)
-    // if (Object.keys(players).length === 2) {
-    //   updateGameStatus('inGame');
-    // } else {
-    //   updateGameStatus('preGame');
-    // }
   }, [players]);
 
-  // const announcerFn = (msg) => {
-  //   setmsg(msg);
-  //   setTimeout(function () {
-  //     setmsg(updateGameStatus());
-  //   }, 2000);
-  // };
 
   const clearBoardFn = () => {
-    // updateTurn(winner!);
     clearBoard();
     updateWinner(null);
     updateGameStatus('inGame');
   };
 
-  // const updateBoardStatusFn = (stat) => {
-  //   // console.log('status updater: ', stat);
-  //   updateStatus(stat);
-  // };
 
   const connectFn = useCallback(() => {
     socket.emit('getInitClients');
     socket.emit('getTurn');
   }, []);
+
 
   const getInitClientsFn = useCallback((currentPlayers: PlayersObj) => {
     console.log('Currr', currentPlayers)
@@ -153,8 +136,10 @@ const App: React.FC = () => {
     }
   }, [players]);
 
+
   const disconnectFn = () => {
   };
+
 
   const disconnectPlayerFn = (player: PlayerObj): void => {
     console.log('removing ', player);
@@ -162,13 +147,6 @@ const App: React.FC = () => {
     checkUpdates();
     clearBoard()
     updateTurnStatus('waiting');
-    // if (players) {
-    //   if (Object.keys(players).length < 2) {
-    //   }
-    //   if (gameStatus === 'inGame' && turn) {
-    //     updateTurnStatus(turn === user);
-    //   }
-    // }
   };
 
   useEffect(() => {
@@ -178,9 +156,6 @@ const App: React.FC = () => {
     socket.on('getTurn', getTurnFn);
     socket.on('toggleTurn', toggleTurnFn);
     socket.on('addPlayer', addPlayerFn);
-    // socket.on('addPlayer1', addPlayerFn);
-    // socket.on('addPlayer2', addPlayerFn);
-    // socket.on('announcer', announcerFn);
     socket.on('clear board', clearBoardFn);
     // socket.on('updateBoardStatus', updateBoardStatusFn);
     socket.on('getInitClients', getInitClientsFn);
@@ -194,7 +169,6 @@ const App: React.FC = () => {
       socket.off('getTurn');
       socket.off('toggleTurn');
       socket.off('addPlayer');
-      // socket.off('announcer');
       socket.off('clear board');
       // socket.off('updateBoardStatus');
       socket.off('getInitClients');
@@ -214,9 +188,9 @@ const App: React.FC = () => {
   useEffect(() => {
     // Updates Msg Notifications on btn
     if (chatIsHidden && chatMessagesUnseen > 0) {
-      setOpenChatSymbol('>*');
+      setOpenChatSymbol(faAnchorCircleExclamation);
     } else {
-      setOpenChatSymbol('>');
+      setOpenChatSymbol(faAnchor);
     }
   }, [feed, chatIsHidden]);
 
@@ -230,19 +204,26 @@ const App: React.FC = () => {
         <Board />
 
         <Feed hidden={chatIsHidden} />
-        <ChatBtn
-          onClick={() => toggleChat()}
-        >
-          {chatIsHidden ?
-            openChatSymbol
-            :
-            "<"}
-        </ChatBtn>
+
+        {(chatIsHidden && chatMessagesUnseen > 0)
+          ?
+          <ChatBtnNotify
+            onClick={() => toggleChat()}
+          >
+            <FontAwesomeIcon icon={openChatSymbol} />
+          </ChatBtnNotify>
+          :
+          <ChatBtn
+            onClick={() => toggleChat()}
+          >
+            <FontAwesomeIcon icon={faAnchor} />
+          </ChatBtn>
+        }
 
 
       </GameContainer>
 
-        {/* <Footer /> */}
+      {/* <Footer /> */}
 
     </AppContainer>
   );

@@ -6,7 +6,6 @@ type boardStatusType = 'preGame' | 'inGame' | 'draw' | 'hasWinner' | null;
 type headerStatusType = '' | '' | '' | null;
 type turnStatusType = 'It\'s your turn' | 'Waiting on your opponent...' | 'Waiting for Players to join...';
 type gameStatusType = 'preGame' | 'inGame' | 'draw' | 'hasWinner' | null;
-// type gameStatusType = 'Draw' | 'hasWinner' | null;
 type playerStatusType = 'Player1 ... Player2...' | string;
 
 type PlayerStatObj = {

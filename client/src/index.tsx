@@ -5,6 +5,11 @@ import { StoreProvider } from 'easy-peasy';
 import store from './Redux';
 // import Context from './Context';
 
+// import { library } from '@fortawesome/fontawesome-svg-core'
+// import { fas } from '@fortawesome/free-solid-svg-icons'
+
+// library.add(fas)
+
 const app = document.getElementById('app')!;
 const root = ReactDOM.createRoot(app);
 
