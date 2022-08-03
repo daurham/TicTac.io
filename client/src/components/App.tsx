@@ -197,7 +197,7 @@ const App: React.FC = () => {
 
         </GameContainer>
 
-        {/* <Footer /> */}
+        <Footer />
 
       </OverlayAnnouncment>
 
