@@ -1,23 +1,16 @@
 import axios from "axios";
-import { action, Action, ActionOn, Actions, thunk, Thunk } from "easy-peasy";
+import { action, Action, thunk, Thunk } from "easy-peasy";
+import { 
+  ScoreBoard,
+  PlayerScoreData,
+  WinnerType,
+ } from '../../Types';
 
-
-interface ScoreBoard {
-  player1Score: number;
-  player2Score: number;
-};
-
-interface PlayerScoreData {
-  name: string;
-  wins: number;
-};
-
-type Winner = 'player1' | 'player2';
 
 export interface ScoreModel {
   scoreBoard: ScoreBoard;
   leaderBoard: PlayerScoreData[];
-  incrementScore: Action<ScoreModel, Winner>;
+  incrementScore: Action<ScoreModel, WinnerType>;
   updateLeaderBoard: Action<ScoreModel, PlayerScoreData[]>;
   getLeaderBoardData: Thunk<ScoreModel>;
 };
@@ -40,7 +33,7 @@ const score: ScoreModel = {
       console.error(err);
     };
   }),
-  incrementScore: action((state, payload: Winner) => {
+  incrementScore: action((state, payload: WinnerType) => {
     if (payload === 'player1') {
       state.scoreBoard.player1Score += 1;
     };

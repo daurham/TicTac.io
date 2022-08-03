@@ -1,24 +1,9 @@
-import { action, Action, ActionOn, actionOn } from 'easy-peasy';
-
-
-type Player = {
-  id: string;
-  name: string;
-  player: 'player1' | 'player2';
-  playerValue:  'X' | 'O' ;
-}
-
-interface SessionObj {
-  id: string | null;
-  user: string | 'Audience' | null;
-  player: 'player1' | 'player2' | false | null;
-  playerValue: 'X' | 'O' | null;
-}
+import { action, Action} from 'easy-peasy';
+import { SessionObj } from '../../Types';
 
 export interface UserModel {
   userSession: SessionObj,
   setUser: Action<UserModel, SessionObj>,
-  // getPlayerValue?: Action<UserModel>,
 }
 
 const user: UserModel = {
@@ -27,6 +12,8 @@ const user: UserModel = {
     user: null,
     player: null,
     playerValue: null,
+    symbol: null,
+    room: null,
   },
   setUser: action((state, payload: SessionObj): void => {
     if (state.userSession.id === null) {

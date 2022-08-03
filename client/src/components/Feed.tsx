@@ -1,19 +1,11 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { useData } from '../Context';
+import { socket } from '../Socket'
 import { useStoreActions, useStoreState } from '../Redux';
 import { ChatContainer, FeedContainer } from './styles/FeedStyles';
+import { ChatProps, ChatMsg } from '../Types';
 
-type Props = {
-  hidden: Boolean;
-};
 
-interface ChatMsg {
-  name: string;
-  message: string;
-};
-
-const Feed = ({ hidden }: Props) => {
-  const socket = useData();
+const Feed = ({ hidden }: ChatProps) => {
   const [input, setInput] = useState('');
   const { feed } = useStoreState(state => state.chat);
   const { addToFeed, afterAddToFeed } = useStoreActions(action => action.chat);
@@ -38,9 +30,7 @@ const Feed = ({ hidden }: Props) => {
     return () => {
       socket.off('message');
     }
-  }, [feed])
-  
-
+  }, [feed]);
 
 
   return hidden ? null : (

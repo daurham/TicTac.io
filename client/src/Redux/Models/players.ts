@@ -1,22 +1,5 @@
 import { Action, action, actionOn, ActionOn, Thunk, thunk } from "easy-peasy";
-
-type Player = {
-  id: string;
-  player: 'player1' | 'player2';
-  name: string;
-  playerValue: string;
-}
-
-type PlayerStatObj = {
-  action: 'remove' | 'add';
-  player: 'player1' | 'player2';
-  name: string;
-}
-
-interface PlayersObj {
-  player1: Player | null;
-  player2: Player | null;
-}
+import { Player, PlayersObj } from '../../Types'
 
 export interface PlayersModel {
   player1: Player | null;

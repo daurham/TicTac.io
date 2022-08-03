@@ -14,42 +14,23 @@ import {
   InptSt,
 } from './styles/HeaderStyles';
 import { socket } from '../Socket';
+import { Props } from '../Types';
 
-type Props = {};
+
 
 const Header = (props: Props) => {
   const user = useStoreState(state => state.user.userSession.user);
-  
   const {
     turn,
     winner,
     gameStatus,
-    boardStatus,
-    headerStatus,
-    playerStatus,
     turnStatus,
   } = useStoreState(state => state.statuses);
-
   const {
     player1,
     player2,
     players
   } = useStoreState(state => state.players);
-
-  const {
-    chatMessagesTotal,
-    chatMessagesSeen,
-    chatMessagesUnseen,
-  } = useStoreState(state => state.chat);
-
-  const {
-    boardLayout
-  } = useStoreState(state => state.board);
-
-  const {
-    clearBoard
-  } = useStoreActions(actions => actions.board);
-
   const {
     updateTurnStatus
   } = useStoreActions(actions => actions.statuses);
@@ -85,6 +66,7 @@ const Header = (props: Props) => {
     }
   }, [gameStatus, players]);
 
+
   return (
     <HeaderContainer>
       <Title>TicTac.io</Title>
@@ -92,34 +74,46 @@ const Header = (props: Props) => {
       <GameStatusContainer>
 
         <Plist>{updatePlayerList()}</Plist>
-        {(gameStatus === 'preGame' || gameStatus === 'inGame')
-          ?
-          <Plist>{turnStatus}</Plist>
-          : null}
+        {
+          (gameStatus === 'preGame' || gameStatus === 'inGame')
+            ?
+            <Plist>{turnStatus}</Plist>
+            : null}
 
-        {user ?
-          <ScoreBoard
-            hidden={!gameStatus} >
-            {/* {getScores()} */}
-          </ScoreBoard>
-          :
-          <JoinGame />
+        {
+          user
+            ?
+            <ScoreBoard
+              hidden={!gameStatus} >
+            </ScoreBoard>
+            :
+            <JoinGame />
         }
 
-        {(gameStatus !== 'hasWinner') ? null
-          :
-          <div>
-            <BigStatus>{winner!.toUpperCase()} WON!</BigStatus>
-            <BtnSt onClick={(e) => { e.preventDefault(); emitClearBoard(); }}>Reset</BtnSt>
-          </div>
+        {
+          (gameStatus !== 'hasWinner')
+            ? null
+            :
+            <div>
+              <BigStatus>{winner!.toUpperCase()} WON!</BigStatus>
+              <BtnSt
+                onClick={(e) => {
+                  e.preventDefault();
+                  emitClearBoard();
+                }}>
+                Reset
+              </BtnSt>
+            </div>
         }
 
-        {(gameStatus !== 'draw') ? null
-          :
-          <div>
-            <BigStatus>{drawStatus()}</BigStatus>
-            <BtnSt onClick={emitClearBoard}>Reset</BtnSt>
-          </div>
+        {
+          (gameStatus !== 'draw')
+            ? null
+            :
+            <div>
+              <BigStatus>{drawStatus()}</BigStatus>
+              <BtnSt onClick={emitClearBoard}>Reset</BtnSt>
+            </div>
         }
 
       </GameStatusContainer>

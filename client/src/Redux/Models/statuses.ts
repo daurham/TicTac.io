@@ -1,29 +1,26 @@
 import { action, Action, ActionOn, Actions } from "easy-peasy";
-// import {PlayersModel} from 'players';
+import { 
+  BoardStatusType,
+  TurnStatusType,
+  HeaderStatusType,
+  GameStatusType,
+  PlayerStatusType,
+  PlayerStatObj,
+ } from '../../Types';
 
 
-type boardStatusType = 'preGame' | 'inGame' | 'draw' | 'hasWinner' | null;
-type headerStatusType = '' | '' | '' | null;
-type turnStatusType = 'It\'s your turn' | 'Waiting on your opponent...' | 'Waiting for Players to join...';
-type gameStatusType = 'preGame' | 'inGame' | 'draw' | 'hasWinner' | null;
-type playerStatusType = 'Player1 ... Player2...' | string;
 
-type PlayerStatObj = {
-  action: 'remove' | 'add';
-  player: 'player1' | 'player2';
-  name: string;
-}
 
 export interface StatusesModel {
   turn: string | null;
   winner: string | null;
-  boardStatus: boardStatusType;
-  turnStatus: turnStatusType;
-  gameStatus: gameStatusType;
-  headerStatus: headerStatusType;
-  playerStatus: playerStatusType;
+  boardStatus: BoardStatusType;
+  turnStatus: TurnStatusType;
+  gameStatus: GameStatusType;
+  headerStatus: HeaderStatusType;
+  playerStatus: PlayerStatusType;
   updateTurn: Action<StatusesModel, string>;
-  updateGameStatus: Action<StatusesModel, gameStatusType>;
+  updateGameStatus: Action<StatusesModel, GameStatusType>;
   updateTurnStatus: Action<StatusesModel, boolean | string>;
   updatePlayerStatus: Action<StatusesModel, PlayerStatObj>;
   updateBoardStatus: Action<StatusesModel, PlayerStatObj>;
@@ -63,10 +60,7 @@ const statuses: StatusesModel = {
     }
   }),
   updateBoardStatus: action((state, payload) => {
-    // let updateName = '...'
-    // if (payload.action === 'remove') {
-    //   state.boardStatus 
-    // } 
+    /* LOGIC */
   }),
   updateHeaderStatus: action((state, payload) => {}),
   updateWinner: action((state, payload) => {

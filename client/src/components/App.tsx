@@ -1,42 +1,19 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { useStoreActions, useStoreState } from '../Redux'
-import { useData } from '../Context';
+import { socket } from '../Socket'
 import { AppContainer, GameContainer, ChatBtn, ChatBtnNotify } from './styles/AppStyles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMessage, faAnchor, faAnchorCircleExclamation, faAnchorCircleCheck, faAnchorCircleXmark, faAnchorLock } from '@fortawesome/free-solid-svg-icons'
+import { faAnchor, faAnchorCircleExclamation, faAnchorCircleCheck, faAnchorCircleXmark, faAnchorLock } from '@fortawesome/free-solid-svg-icons'
 import Board from './Board';
 import Feed from './Feed';
 import Header from './Header';
 import Footer from './Footer';
 import OverlayAnnouncment from './OverlayAnnouncment';
-
-// import {
-//   IconLookup,
-//   IconDefinition,
-//   findIconDefinition
-// } from '@fortawesome/fontawesome-svg-core'
-
-// const coffeeLookup: IconLookup = { prefix: 'fas', iconName: 'coffee' }
-// const coffeeIconDefinition: IconDefinition = findIconDefinition(coffeeLookup)
-
-
-
-type PlayerObj = {
-  id: string;
-  player: 'player1' | 'player2';
-  name: string;
-  playerValue: string;
-}
-
-interface PlayersObj {
-  player1: PlayerObj | null;
-  player2: PlayerObj | null;
-}
+import { PlayersObj, Player } from '../Types'
 
 
 
 const App: React.FC = () => {
-  const socket = useData();
   const state = useStoreState(state => state);
   const actions = useStoreActions(actions => actions);
   const [openChatSymbol, setOpenChatSymbol] = useState<any>()
@@ -45,25 +22,26 @@ const App: React.FC = () => {
   const { boardLayout } = state.board;
   const { players, player1, player2 } = state.players;
   const { turn, gameStatus, winner } = state.statuses;
-  const { chatIsHidden, chatMessagesUnseen, feed } = state.chat;
   const { userSession } = state.user;
   const { user } = userSession;
+  const {
+    chatIsHidden,
+    chatMessagesUnseen,
+    feed
+  } = state.chat;
 
   // Actions
   const { toggleChat } = actions.chat;
-
   const {
     removePlayer,
     updatePlayers,
   } = actions.players;
-
   const {
     updateTurn,
     updateTurnStatus,
     updateGameStatus,
     updateWinner,
   } = actions.statuses;
-
   const {
     updateBoard,
     clearBoard,
@@ -77,7 +55,7 @@ const App: React.FC = () => {
     }
   };
 
-  const checkGameStatus = () => {
+  const checkGameStatus = ():void => {
     if (players) {
       let totalPlayerCount = Object.keys(players).length;
       if (totalPlayerCount === 2 && gameStatus !== 'inGame') {
@@ -89,21 +67,20 @@ const App: React.FC = () => {
     }
   };
 
-
-  const moveFn = (data: any) => {
-    console.log('move: ', data)
+  const moveFn = (data: any):void => {
+    // console.log('move: ', data)
     updateBoard(data);
   };
 
-  const getTurnFn = (name: string) => {
-    console.log('getTurn Recieved ->', name);
+  const getTurnFn = (name: string):void => {
+    // console.log('getTurn Recieved ->', name);
     if (turn !== name) {
       updateTurn(name);
     }
   };
 
-  const toggleTurnFn = (name: string) => {
-    console.log('toggleTurn Recieved ->', name);
+  const toggleTurnFn = (name: string):void => {
+    // console.log('toggleTurn Recieved ->', name);
     updateTurnStatus(name === user)
     updateTurn(name);
   };
@@ -130,7 +107,7 @@ const App: React.FC = () => {
 
 
   const getInitClientsFn = useCallback((currentPlayers: PlayersObj) => {
-    console.log('Currr', currentPlayers)
+    // console.log('Currr', currentPlayers)
     updatePlayers(currentPlayers);
     if (Object.keys(currentPlayers).length >= 1) {
       updateGameStatus('preGame');
@@ -142,8 +119,8 @@ const App: React.FC = () => {
   };
 
 
-  const disconnectPlayerFn = (player: PlayerObj): void => {
-    console.log('removing ', player);
+  const disconnectPlayerFn = (player: Player): void => {
+    // console.log('removing ', player);
     removePlayer(player);
     checkUpdates();
     clearBoard()
@@ -152,26 +129,21 @@ const App: React.FC = () => {
 
   useEffect(() => {
 
-    // console.log('LISTENING IN USEEFFECT');
     socket.on('move', moveFn);
     socket.on('getTurn', getTurnFn);
     socket.on('toggleTurn', toggleTurnFn);
     socket.on('addPlayer', addPlayerFn);
     socket.on('clear board', clearBoardFn);
-    // socket.on('updateBoardStatus', updateBoardStatusFn);
     socket.on('getInitClients', getInitClientsFn);
     socket.on('connect', connectFn);
     socket.on('disconnect', disconnectFn);
     socket.on('disconnectPlayer', disconnectPlayerFn);
-    // checkUpdates();
-    // checkGameStatus();
     return () => {
       socket.off('move');
       socket.off('getTurn');
       socket.off('toggleTurn');
       socket.off('addPlayer');
       socket.off('clear board');
-      // socket.off('updateBoardStatus');
       socket.off('getInitClients');
       socket.off('connect');
       socket.off('disconnect');
@@ -187,7 +159,6 @@ const App: React.FC = () => {
   ]);
 
   useEffect(() => {
-    // Updates Msg Notifications on btn
     if (chatIsHidden && chatMessagesUnseen > 0) {
       setOpenChatSymbol(faAnchorCircleExclamation);
     } else {
@@ -200,33 +171,33 @@ const App: React.FC = () => {
     <AppContainer>
       <OverlayAnnouncment>
 
-      <Header />
+        <Header />
 
-      <GameContainer>
+        <GameContainer>
 
-        <Board />
+          <Board />
 
-        <Feed hidden={chatIsHidden} />
+          <Feed hidden={chatIsHidden} />
 
-        {(chatIsHidden && chatMessagesUnseen > 0)
-          ?
-          <ChatBtnNotify
-            onClick={() => toggleChat()}
-          >
-            <FontAwesomeIcon icon={openChatSymbol} />
-          </ChatBtnNotify>
-          :
-          <ChatBtn
-            onClick={() => toggleChat()}
-          >
-            <FontAwesomeIcon icon={faAnchor} />
-          </ChatBtn>
-        }
+          {(chatIsHidden && chatMessagesUnseen > 0)
+            ?
+            <ChatBtnNotify
+              onClick={() => toggleChat()}
+            >
+              <FontAwesomeIcon icon={openChatSymbol} />
+            </ChatBtnNotify>
+            :
+            <ChatBtn
+              onClick={() => toggleChat()}
+            >
+              <FontAwesomeIcon icon={faAnchor} />
+            </ChatBtn>
+          }
 
 
-      </GameContainer>
+        </GameContainer>
 
-      {/* <Footer /> */}
+        {/* <Footer /> */}
 
       </OverlayAnnouncment>
 

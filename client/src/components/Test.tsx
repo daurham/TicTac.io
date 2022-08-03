@@ -1,24 +1,22 @@
 import React from 'react'
 import { useStoreState } from '../Redux'
+import { Props } from '../Types';
 
-type Props = {}
+
 
 const Test = (props: Props) => {
   const state = useStoreState(state => state);
-  
   const {
     chatIsHidden,
     chatMessagesSeen,
     chatMessagesTotal,
     chatMessagesUnseen,
   } = state.chat; 
-
   const {
     player1,
     player2,
     players,
   } = state.players; 
-
   const {
     gameStatus,
     boardStatus,
@@ -28,6 +26,7 @@ const Test = (props: Props) => {
     turnStatus,
     winner,
   } = state.statuses; 
+
 
   return (
     <div>
@@ -68,7 +67,7 @@ const Test = (props: Props) => {
         Winner: {winner}
       </li>
     </div>
-  )
-}
+  );
+};
 
-export default Test
+export default Test;

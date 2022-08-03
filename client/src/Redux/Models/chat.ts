@@ -1,10 +1,5 @@
 import { Action, action, actionOn, ActionOn } from "easy-peasy";
-
-interface ChatMsg {
-  name: string;
-  message: string;
-}
-
+import { ChatMsg } from "../../Types";
 
 export interface ChatModel {
   feed: ChatMsg[];
@@ -35,15 +30,6 @@ const chat: ChatModel = {
     console.log(payload);
     state.feed.push(payload);
   }),
-  // onAddToFeed: actionOn(actions => actions.addToFeed,
-  //   (state, target) => {
-  //     state.chatMessagesTotal += 1;
-  //     if (state.chatIsHidden === true) {
-  //       state.chatMessagesUnseen += 1;
-  //     } else {
-  //       state.chatMessagesSeen += 1;
-  //     }
-  //   }),
   afterAddToFeed: action((state, payload) => {
       state.chatMessagesTotal += 1;
       if (state.chatIsHidden === true) {

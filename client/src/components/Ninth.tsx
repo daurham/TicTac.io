@@ -1,6 +1,6 @@
 import React from 'react';
 import { useStoreState } from '../Redux';
-import { useData } from '../Context';
+import { socket } from '../Socket';
 import {
   PlayerValueStyle,
   NonaVerticalContainer,
@@ -10,19 +10,11 @@ import {
   WaitButton,
   TurnButton,
 } from './styles/NinthStyles';
+import { NinthProps, NinthUpdateData } from '../Types';
 
-type Props = {
-  ninthNum: string;
-  value: string;
-  symbol: any;
-};
 
-interface NinthUpdateData {
-  [key: string]: '' | 'X' | 'O';
-};
 
-const Ninth = ({ ninthNum, value, symbol }: Props) => {
-  const socket = useData();
+const Ninth = ({ ninthNum, value, symbol }: NinthProps) => {
   const user = useStoreState(state => state.user.userSession.user);
   const turn = useStoreState(state => state.statuses.turn);
   const gameStatus = useStoreState(state => state.statuses.gameStatus);
@@ -39,7 +31,6 @@ const Ninth = ({ ninthNum, value, symbol }: Props) => {
       }
     }
   };
-
 
   const checkClick = (): void => {
     if (value === '') {

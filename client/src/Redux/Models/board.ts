@@ -1,34 +1,15 @@
-import { Action, action } from "easy-peasy";
-
-interface Board {
-  ninth1?: string;
-  ninth2?: string;
-  ninth3?: string;
-  ninth4?: string;
-  ninth5?: string;
-  ninth6?: string;
-  ninth7?: string;
-  ninth8?: string;
-  ninth9?: string;
-}
-
-interface BoardArrayElement {
-  ninth: string;
-  value: string;
-}
-
-interface BoardUpdate {
-  [key: string]: string
-}
-
-type BoardKeys = 'ninth1' | 'ninth2' | 'ninth3' | 'ninth4' | 'ninth5' | 'ninth6' | 'ninth7' | 'ninth8' | 'ninth9';
+import { Action, action, thunkOn, ThunkOn} from "easy-peasy";
+import { Board, BoardArrElem, BoardArray } from "../../Types";
+import players from "./players";
 
 
 export interface BoardModel {
   boardLayout: Board;
+  boardArray: BoardArray;
   updateBoard: Action<BoardModel, Board>;
   clearBoard: Action<BoardModel>;
-  // boardArray: Action<BoardModel>;
+  makeBoardArray: Action<BoardModel>;
+  updateBoardArray: ThunkOn<BoardModel>;
 }
 
 const board: BoardModel = {
@@ -43,9 +24,54 @@ const board: BoardModel = {
     ninth8: '',
     ninth9: ''
   },
+  boardArray: [
+    {
+      ninth: 'ninth1',
+      value: '',
+      symbol: null,
+    },
+    {
+      ninth: 'ninth2',
+      value: '',
+      symbol: null,
+    },
+    {
+      ninth: 'ninth3',
+      value: '',
+      symbol: null,
+    },
+    {
+      ninth: 'ninth4',
+      value: '',
+      symbol: null,
+    },
+    {
+      ninth: 'ninth5',
+      value: '',
+      symbol: null,
+    },
+    {
+      ninth: 'ninth6',
+      value: '',
+      symbol: null,
+    },
+    {
+      ninth: 'ninth7',
+      value: '',
+      symbol: null,
+    },
+    {
+      ninth: 'ninth8',
+      value: '',
+      symbol: null,
+    },
+    {
+      ninth: 'ninth9',
+      value: '',
+      symbol: null,
+    },
+  ],
   updateBoard: action((state, payload: Board) => {
-    // let oldBoard = state.boardLayout;
-    // let newBoardData = payload;
     for (let newKey in payload) {
       for (let oldKey in state.boardLayout) {
         if (oldKey !== newKey) {
@@ -56,19 +82,41 @@ const board: BoardModel = {
     state.boardLayout = payload;
   }),
   clearBoard: action((state, payload) => {
-    // let oldBoard = state.boardLayout;
     let newBoard: Board = {};
     for (let key in state.boardLayout) {
       newBoard[key as keyof Board] = "";
     };
     state.boardLayout = newBoard;
   }),
-  // boardArray: action((state, payload): BoardArrayElement[] => {
-  //   const nonsArr = Object.keys(state.boardLayout);
-  // 	let result = nonsArr.map((x, index: number) => {
-  // 		let elem: BoardArrayElement = { ninth: `ninth${index + 1}`, value: state.boardLayout[`ninth${index + 1}`] };
-  // 		return elem;
-  // 	});
+  makeBoardArray: action((state, payload): void => {
+    const nonsArr = Object.keys(state.boardLayout);
+    let result = nonsArr.map((x, index) => {
+      let pVal = state.boardLayout[`ninth${index + 1}` as keyof typeof state.boardLayout];
+      let elem: BoardArrElem = {
+        ninth: `ninth${String(index + 1)}`,
+        value: state.boardLayout[`ninth${index + 1}` as keyof typeof state.boardLayout],
+        symbol: pVal === 'X' ? players.player1?.symbol : players.player2?.symbol,
+      };
+      return elem;
+    });
+    state.boardArray = result;
+  }),
+  updateBoardArray: thunkOn(
+      (actions, storeActions) => [ 
+      actions.clearBoard, 
+      actions.updateBoard, 
+    ],
+    (actions, target) => {
+      const [clearBoard, updateBoard] = target.resolvedTargets;
+      const update = () => {
+        actions.makeBoardArray();
+      }
+      switch (target.type) {
+        case clearBoard: update();
+        case updateBoard: update();
+      }
+    }),
 };
 
 export default board;
+

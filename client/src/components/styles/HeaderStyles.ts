@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 export const HeaderContainer = styled.div`
 // font-family: monospace;
-
 `;
 
 export const GameStatusContainer = styled.div`
@@ -11,7 +10,6 @@ display: flex;
 flex-direction: column;
 justify-content: center;
 `;
-
 
 export const ScoreBoard = styled.div`
 // font-family: monospace;
@@ -56,7 +54,6 @@ export const InptSt = styled.input`
 font-family: monospace;
   // margin: 3px;
   `;
-
 
 export const WinnerOverlay = styled.div`
 position: absolute;

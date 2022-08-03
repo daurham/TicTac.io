@@ -1,17 +1,5 @@
-type NinthTypes = 'ninth1' | 'ninth2' | 'ninth3' | 'ninth4' | 'ninth5' | 'ninth6' | 'ninth7' | 'ninth8' | 'ninth9';
+import {BoardArrElem, NinthTypes, Player} from '../Types'
 
-type BoardArrElem = {
-  ninth: NinthTypes;
-  value: '' | 'X' | 'O';
-  symbol: any;
-};
-type Player = {
-  id: string;
-  player: 'player1' | 'player2';
-  name: string;
-  playerValue: string;
-  symbol: any;
-}
 
 const checkMatrix = (matrix: any[], possibleWins: any[], player1: Player, player2: Player) => {
   let boardStatus = null;
@@ -33,6 +21,7 @@ const checkMatrix = (matrix: any[], possibleWins: any[], player1: Player, player
   });
   return boardStatus;
 };
+
 
 export const checkBoardStatus = (boardArray: BoardArrElem[], player1: Player, player2: Player) => {
   const matrix = [[...boardArray.slice(0, 3)], [...boardArray.slice(3, 6)], [...boardArray.slice(6, 9)]];

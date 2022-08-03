@@ -1,20 +1,14 @@
 import React, { useState } from 'react'
-import { useData } from '../Context';
+import { socket } from '../Socket';
 import { useStoreActions, useStoreState } from '../Redux';
 import { InptSt, BtnSt, JoinGameContainer } from './styles/JoinGameStyles';
+import { SessionObj, Props } from '../Types';
 
-type Props = {};
-
-interface SessionObj {
-  id: string | null;
-  user: string | 'Audience' | null;
-  player: 'player1' | 'player2' | false | null;
-  playerValue: 'X' | 'O' | null;
-};
 
 const JoinGame = (props: Props) => {
-  const socket = useData();
-  const [input, setInput] = useState('Jini');
+  const [nameInput, setNameInput] = useState('Jini');
+  const [roomInput, setRoomInput] = useState();
+
   const { players, player1, player2 } = useStoreState(state => state.players);
   const user = useStoreState(state => state.user.userSession.user);
   const setUser = useStoreActions(actions => actions.user.setUser);
@@ -44,6 +38,8 @@ const JoinGame = (props: Props) => {
       user,
       player,
       playerValue,
+      symbol: null,
+      room: null,
     };
     user = String(user);
     if (nameIsValid(user)) {
@@ -66,14 +62,14 @@ const JoinGame = (props: Props) => {
   return user ? null : (
     <JoinGameContainer>
       <InptSt
-        onClick={() => setInput('Jake')}
-        onChange={(e) => setInput(e.target.value)}
+        onClick={() => setNameInput('Jake')}
+        onChange={(e) => setNameInput(e.target.value)}
         placeholder={'name'}
-        value={input}
+        value={nameInput}
         type="text"
       />
       <BtnSt
-        onClick={(e) => { e.preventDefault(); submitPlayer(input || 'Jini?') }}
+        onClick={(e) => { e.preventDefault(); submitPlayer(nameInput || 'Jini?') }}
         type="submit">
         Join
       </BtnSt>
