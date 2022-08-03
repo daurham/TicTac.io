@@ -43,7 +43,7 @@ export const Title = styled.h1`
   justify-content: center;
   margin: 0px;
   `;
-  export const JoinBar = styled.form`
+export const JoinBar = styled.form`
   // font-family: monospace;
   display: flex;
   justify-content: center;
@@ -56,3 +56,14 @@ export const InptSt = styled.input`
 font-family: monospace;
   // margin: 3px;
   `;
+
+
+export const WinnerOverlay = styled.div`
+position: absolute;
+top: 50%;
+left: 50%;
+font-size: 50px;
+color: white;
+transform: translate(-50%,-50%);
+-ms-transform: translate(-50%,-50%);
+`;

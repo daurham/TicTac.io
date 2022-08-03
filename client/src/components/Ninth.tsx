@@ -14,13 +14,14 @@ import {
 type Props = {
   ninthNum: string;
   value: string;
+  symbol: any;
 };
 
 interface NinthUpdateData {
   [key: string]: '' | 'X' | 'O';
 };
 
-const Ninth = ({ ninthNum, value }: Props) => {
+const Ninth = ({ ninthNum, value, symbol }: Props) => {
   const socket = useData();
   const user = useStoreState(state => state.user.userSession.user);
   const turn = useStoreState(state => state.statuses.turn);
@@ -54,11 +55,11 @@ const Ninth = ({ ninthNum, value }: Props) => {
           {user === turn
             ?
             <TurnButton onClick={checkClick}>
-              <PlayerValueStyle className={ninthNum}>{value}</PlayerValueStyle>
+              <PlayerValueStyle className={ninthNum}>{symbol ? symbol : value}</PlayerValueStyle>
             </TurnButton >
             :
             <WaitButton onClick={checkClick}>
-              <PlayerValueStyle className={ninthNum}>{value}</PlayerValueStyle>
+              <PlayerValueStyle className={ninthNum}>{symbol ? symbol : value}</PlayerValueStyle>
             </WaitButton >
           }
         </NonaVerticalContainer>
@@ -69,11 +70,11 @@ const Ninth = ({ ninthNum, value }: Props) => {
           {user === turn
             ?
             <TurnButton onClick={checkClick}>
-              <PlayerValueStyle className={ninthNum}>{value}</PlayerValueStyle>
+              <PlayerValueStyle className={ninthNum}>{symbol ? symbol : value}</PlayerValueStyle>
             </TurnButton >
             :
             <WaitButton onClick={checkClick}>
-              <PlayerValueStyle className={ninthNum}>{value}</PlayerValueStyle>
+              <PlayerValueStyle className={ninthNum}>{symbol ? symbol : value}</PlayerValueStyle>
             </WaitButton >
           }
         </NonaHorizontalContainer>
@@ -84,11 +85,11 @@ const Ninth = ({ ninthNum, value }: Props) => {
           {user === turn
             ?
             <TurnButton onClick={checkClick}>
-              <PlayerValueStyle className={ninthNum}>{value}</PlayerValueStyle>
+              <PlayerValueStyle className={ninthNum}>{symbol ? symbol : value}</PlayerValueStyle>
             </TurnButton >
             :
             <WaitButton onClick={checkClick}>
-              <PlayerValueStyle className={ninthNum}>{value}</PlayerValueStyle>
+              <PlayerValueStyle className={ninthNum}>{symbol ? symbol : value}</PlayerValueStyle>
             </WaitButton >
           }
         </NonaCornerContainer>
@@ -99,11 +100,11 @@ const Ninth = ({ ninthNum, value }: Props) => {
           {user === turn
             ?
             <TurnButton onClick={checkClick}>
-              <PlayerValueStyle className={ninthNum}>{value}</PlayerValueStyle>
+              <PlayerValueStyle className={ninthNum}>{symbol ? symbol : value}</PlayerValueStyle>
             </TurnButton >
             :
             <WaitButton onClick={checkClick}>
-              <PlayerValueStyle className={ninthNum}>{value}</PlayerValueStyle>
+              <PlayerValueStyle className={ninthNum}>{symbol ? symbol : value}</PlayerValueStyle>
             </WaitButton >
           }
         </NonaCenterContainer>

@@ -8,6 +8,7 @@ import Board from './Board';
 import Feed from './Feed';
 import Header from './Header';
 import Footer from './Footer';
+import OverlayAnnouncment from './OverlayAnnouncment';
 
 // import {
 //   IconLookup,
@@ -197,6 +198,8 @@ const App: React.FC = () => {
 
   return (
     <AppContainer>
+      <OverlayAnnouncment>
+
       <Header />
 
       <GameContainer>
@@ -224,6 +227,8 @@ const App: React.FC = () => {
       </GameContainer>
 
       {/* <Footer /> */}
+
+      </OverlayAnnouncment>
 
     </AppContainer>
   );

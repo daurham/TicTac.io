@@ -3,12 +3,14 @@ type NinthTypes = 'ninth1' | 'ninth2' | 'ninth3' | 'ninth4' | 'ninth5' | 'ninth6
 type BoardArrElem = {
   ninth: NinthTypes;
   value: '' | 'X' | 'O';
+  symbol: any;
 };
 type Player = {
   id: string;
   player: 'player1' | 'player2';
   name: string;
   playerValue: string;
+  symbol: any;
 }
 
 const checkMatrix = (matrix: any[], possibleWins: any[], player1: Player, player2: Player) => {
@@ -23,7 +25,7 @@ const checkMatrix = (matrix: any[], possibleWins: any[], player1: Player, player
     let player1Plays = arr.filter(e => e.value === player1.playerValue);
     if (player1Plays.length === 3) {
       boardStatus = 'player1';
-    }    
+    }
     let player2Plays = arr.filter(e => e.value === player2.playerValue);
     if (player2Plays.length === 3) {
       boardStatus = 'player2';
